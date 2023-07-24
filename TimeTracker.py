@@ -38,7 +38,7 @@ class FileActions:
     def createJson():
         filename = '{}.json'.format(date.today())
         newObject = json.dumps({"Timestamps":[]})
-        os.path.exists(filename)
+        #os.path.exists(filename)
         if not os.path.exists(filename):
             with open(filename, "w") as outFile:
                 outFile.write(newObject)
