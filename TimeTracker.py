@@ -44,7 +44,7 @@ class App(QMainWindow):
 
     def startTask(self, filename):
         FileActions.createJson(filename)
-        FileActions.writeToJson({'action':self.label_task_desc.text(), 'startTimeStamp':time.strftime(Helpers.TIME_MASK, time.localtime())}, 
+        FileActions.writeToJson({'action':self.label_task_desc.text(), Helpers.TIME_STAMP_START:time.strftime(Helpers.TIME_MASK, time.localtime())}, 
                                 filename)
 
         self.changeControlsState(False)
@@ -65,30 +65,33 @@ class FileActions:
     def createJson(filename):
         if not os.path.exists(filename):
             with open(filename, "w") as outFile:
-                outFile.write(json.dumps({"Activity":[]}))
+                outFile.write(json.dumps({Helpers.JSON_TIME_ARRAY:[]}))
 
     # Writing data to existing json log
     def writeToJson(data, filename, append = False):
 
         def convertTime(file_data, element_number, timestamp_name):
-            return datetime.strptime(file_data["Activity"][element_number - 1][timestamp_name], Helpers.TIME_MASK)
+            return datetime.strptime(file_data[Helpers.JSON_TIME_ARRAY][element_number - 1][timestamp_name], Helpers.TIME_MASK)
         
         with open(filename,'r+') as file:
             file_data = json.load(file)
             if append:
-                count = len(file_data['Activity'])
-                file_data["Activity"][count - 1]['endTimeStamp'] = data
-                start_datetime = convertTime(file_data, count, 'startTimeStamp')
-                end_datetime = convertTime(file_data, count, 'endTimeStamp')
-                file_data["Activity"][count - 1]['duration'] = '{}'.format(end_datetime - start_datetime)
+                count = len(file_data[Helpers.JSON_TIME_ARRAY])
+                file_data[Helpers.JSON_TIME_ARRAY][count - 1][Helpers.TIME_STAMP_END] = data
+                start_datetime = convertTime(file_data, count, Helpers.TIME_STAMP_START)
+                end_datetime = convertTime(file_data, count, Helpers.TIME_STAMP_END)
+                file_data[Helpers.JSON_TIME_ARRAY][count - 1]['duration'] = '{}'.format(end_datetime - start_datetime)
             else:
-                file_data["Activity"].append(data)
+                file_data[Helpers.JSON_TIME_ARRAY].append(data)
             file.seek(0)
             json.dump(file_data, file, indent = 4, ensure_ascii = False)
         
 # Helper class for overall actions
 class Helpers:
     TIME_MASK = '%H:%M:%S'
+    TIME_STAMP_START = 'startTimeStamp'
+    TIME_STAMP_END = 'endTimeStamp'
+    JSON_TIME_ARRAY = 'Activity'
 
 if __name__ == '__main__':
 
