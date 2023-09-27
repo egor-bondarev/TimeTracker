@@ -108,8 +108,10 @@ class FileActions:
                     lastRecord['duration'] = '{}'.format(end_datetime - start_datetime)
 
             except IndexError:
-                print("[warning]: The first record in the file can't complete the task.")
-                newRecord(True, action, currentTimeStamp, currentTimeStamp, 0)
+                if appendAll:
+                    newRecord(True, action, currentTimeStamp, currentTimeStamp, "Ending Timestamp for previous action NOT FOUND")
+                else:
+                    newRecord(False, action, currentTimeStamp)
 
             file.seek(0)
             json.dump(file_data, file, indent = 4, ensure_ascii = False)
