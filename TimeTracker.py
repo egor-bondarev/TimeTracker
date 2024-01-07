@@ -1,135 +1,128 @@
-import sys
+import tkinter as tk
 import os
 import json
 import time
-import PyQt5.QtWidgets as QtWidgets
 
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QMainWindow
-from PyQt5 import QtCore
 from datetime import date, datetime
-from PyQt5.QtGui import QKeySequence
+from tkinter import ttk
 
-class App(QMainWindow):
-     
-    def __init__(self):
-        QMainWindow.__init__(self, None, QtCore.Qt.WindowStaysOnTopHint)
-        self.setGeometry(800, 400, 170, 90)
-        self.setWindowTitle('TimeTracker')
+# Class with constants.
+class Helpers:
+    TIME_MASK = '%H:%M:%S'
 
-        # Field for action description.
-        self.label_task_desc = QLineEdit('', self)
-        self.label_task_desc.move(20, 10)
-        self.label_task_desc.resize(130, 25)
+    JSON_ROOT = 'Tasks'
+    JSON_TASK = 'Action'
+    JSON_TIME_STAMP_START = 'StartTimestamp'
+    JSON_TIME_STAMP_END = 'EndTimestamp'
+    JSON_TIME_DURATION = 'Duration'
 
-        # Button for starting task.
-        self.btn_start = QPushButton('Start', self)
-        self.btn_start.move(10, 50)
-        self.btn_start.resize(80, 25)
-        self.btn_start.setShortcut(QKeySequence("Shift+Return"))
-        
-        # Button for finishing task.
-        self.btn_finish = QPushButton('Finish', self)
-        self.btn_finish.move(80, 50)
-        self.btn_finish.resize(80, 25)
-        self.btn_finish.setEnabled(True)
-        
-        filename = '{}.json'.format(date.today())
+    FILENAME = '{}.json'.format(date.today())
 
-        self.btn_start.clicked.connect(lambda: self.startTask(filename))
-        self.btn_finish.clicked.connect(lambda: self.finishTask(filename))
-
-    # Action for Finish button.
-    def finishTask(self, filename):
-        FileActions.writeToJson(self.label_task_desc.text(), filename, self.label_task_desc.isEnabled())
-        self.changeControlsState(True)
-
-    # Action for Start button.
-    def startTask(self, filename):
-        FileActions.writeToJson(self.label_task_desc.text(), filename)
-        self.changeControlsState(False)
-
-    # Changing control state after user actions.
-    def changeControlsState(self, isTaskFinished):
-        self.label_task_desc.setEnabled(isTaskFinished)
-        self.btn_start.setEnabled(isTaskFinished)
-
-        if isTaskFinished:
-            self.label_task_desc.clear()
-            self.label_task_desc.setFocus(QtCore.Qt.MouseFocusReason)
-
-
+# Class with actions for json file.
 class FileActions:
 
-    # Check existing log file and create it if needed.
-    def createJson(filename):
-        if not os.path.exists(filename):
-            with open(filename, "w") as outFile:
-                outFile.write(json.dumps({Helpers.JSON_TIME_ARRAY:[]}))
+    # Check existing log file and create it if not.
+    def create_json():
+        if not os.path.exists(Helpers.FILENAME):
+            with open(Helpers.FILENAME, "w") as outFile:
+                outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))
 
     # Writing data to existing json log.
-    def writeToJson(action, filename, appendAll = False):
+    def write_to_json(task_desc, task_finished = False):
 
-        FileActions.createJson(filename)
+        FileActions.create_json()
 
-        def convertTime(file_data, element_number, timestamp_name):
-            return datetime.strptime(file_data[Helpers.JSON_TIME_ARRAY][element_number - 1][timestamp_name], Helpers.TIME_MASK)
+        def convert_time(file_data, element_number, timestamp_name):
+            return datetime.strptime(file_data[Helpers.JSON_ROOT][element_number - 1][timestamp_name], Helpers.TIME_MASK)
         
         # Add new record to file.
-        def newRecord(isTaskEnded, action, startTimestamp, finishTimestamp = None, duration = None):
-            newRecord = file_data[Helpers.JSON_TIME_ARRAY]
-            if isTaskEnded:
-                newRecord.append({'action':action, 
-                                  Helpers.TIME_STAMP_START:startTimestamp, 
-                                  Helpers.TIME_STAMP_END:finishTimestamp,
-                                  'duration':str(duration)})
+        def add_new_record(task_finished, task_desc, start_timestamp, end_timestamp = None, duration = None):
+            newRecord = file_data[Helpers.JSON_ROOT]
+            if task_finished:
+                newRecord.append({Helpers.JSON_TASK:task_desc, 
+                                  Helpers.JSON_TIME_STAMP_START:start_timestamp, 
+                                  Helpers.JSON_TIME_STAMP_END:end_timestamp,
+                                  Helpers.JSON_TIME_DURATION:str(duration)})
             else:
-                newRecord.append({'action':action, Helpers.TIME_STAMP_START:startTimestamp})           
+                newRecord.append({Helpers.JSON_TASK:task_desc, 
+                                  Helpers.JSON_TIME_STAMP_START:start_timestamp})           
         
-        with open(filename,'r+') as file:
+        with open(Helpers.FILENAME,'r+') as file:
             file_data = json.load(file)
-            count = len(file_data[Helpers.JSON_TIME_ARRAY])
-            currentTimeStamp = time.strftime(Helpers.TIME_MASK, time.localtime())
+            number_of_tasks = len(file_data[Helpers.JSON_ROOT])
+            current_timestamp = time.strftime(Helpers.TIME_MASK, time.localtime())
 
-            try:
-                lastRecord = file_data[Helpers.JSON_TIME_ARRAY][count - 1]
-                if 'duration' in lastRecord:
-                    if appendAll:
-                        previousEndTime = lastRecord[Helpers.TIME_STAMP_END]
-                        duration = (datetime.strptime(currentTimeStamp, Helpers.TIME_MASK) - 
-                                    convertTime(file_data, count, Helpers.TIME_STAMP_END))
-                    
-                        newRecord(True, action, previousEndTime, currentTimeStamp, duration)
-                    else:
-                        newRecord(False, action, currentTimeStamp)
+            # if pressed FINISH
+            if task_finished:
+                # if this record is first OR last record has field "duration"
+                if number_of_tasks == 0:
+                    add_new_record(True, task_desc, current_timestamp, current_timestamp, "Ending Timestamp for previous action NOT FOUND")
+                elif (Helpers.JSON_TIME_DURATION in file_data[Helpers.JSON_ROOT][number_of_tasks - 1]):
+                    last_task = file_data[Helpers.JSON_ROOT][number_of_tasks - 1]
+                    start_timestamp = last_task[Helpers.JSON_TIME_STAMP_END]
+                    duration = (datetime.strptime(current_timestamp, Helpers.TIME_MASK) - 
+                                convert_time(file_data, number_of_tasks, Helpers.JSON_TIME_STAMP_END))
+                    add_new_record(True, task_desc, start_timestamp, current_timestamp, duration)
                 else:
-                    lastRecord[Helpers.TIME_STAMP_END] = currentTimeStamp
-                    start_datetime = convertTime(file_data, count, Helpers.TIME_STAMP_START)
-                    end_datetime = convertTime(file_data, count, Helpers.TIME_STAMP_END)
-                    lastRecord['duration'] = '{}'.format(end_datetime - start_datetime)
-
-            except IndexError:
-                if appendAll:
-                    newRecord(True, action, currentTimeStamp, currentTimeStamp, "Ending Timestamp for previous action NOT FOUND")
-                else:
-                    newRecord(False, action, currentTimeStamp)
+                    last_task = file_data[Helpers.JSON_ROOT][number_of_tasks - 1]
+                    last_task[Helpers.JSON_TIME_STAMP_END] = current_timestamp
+                    start_datetime = convert_time(file_data, number_of_tasks, Helpers.JSON_TIME_STAMP_START)
+                    end_datetime = convert_time(file_data, number_of_tasks, Helpers.JSON_TIME_STAMP_END)
+                    last_task[Helpers.JSON_TIME_DURATION] = '{}'.format(end_datetime - start_datetime)
+            # If pressed START
+            else:
+                add_new_record(False, task_desc, current_timestamp)  
 
             file.seek(0)
             json.dump(file_data, file, indent = 4, ensure_ascii = False)
-        
-# Helper class for overall actions.
-class Helpers:
-    TIME_MASK = '%H:%M:%S'
-    TIME_STAMP_START = 'startTimeStamp'
-    TIME_STAMP_END = 'endTimeStamp'
-    JSON_TIME_ARRAY = 'Activity'
 
-if __name__ == '__main__':
+# Changing control state after user actions.
+def change_widgets_states(task_finished):
+    entry['state'] = task_finished
+    btn_start['state'] = task_finished
 
-    app = QtWidgets.QApplication(sys.argv)
+    if task_finished != 'disabled':
+        entry.focus()
+        entry_task_desc.set('')
 
-    helpers = Helpers()
-    actions = FileActions()
-    win = App()
+# Action for Start button.
+def start_task(entry_task_desc):
+    FileActions.write_to_json(entry_task_desc.get())
+    change_widgets_states('disabled')
 
-    win.show()
-    sys.exit(app.exec_())
+# Action for Finish button.
+def finish_task(entry_task_desc):
+    FileActions.write_to_json(entry_task_desc.get(), True)
+    change_widgets_states('enabled')
+
+# creating window
+main_window = tk.Tk()
+main_window.title('TimeTracker')
+main_window.geometry('170x90')
+
+# input frame
+input_frame = ttk.Frame(master = main_window)
+
+# entry field
+entry_task_desc = tk.StringVar()
+entry = ttk.Entry(
+    master = main_window, 
+    width = 130, 
+    font = ("default", 10), 
+    textvariable = entry_task_desc)
+entry.bind('<Shift-KeyPress-Return>', lambda event: start_task(entry_task_desc))
+entry.focus()
+entry.pack(padx = 20, pady = 10)
+
+# start button
+btn_start = ttk.Button(master = input_frame, text = "Start", command = lambda: start_task(entry_task_desc))
+btn_start.pack(side = 'left', padx = 5)
+
+# finish button
+btn_finish = ttk.Button(master = input_frame, text = "Finish", command = lambda: finish_task(entry_task_desc))
+btn_finish.pack(side = 'left')
+
+input_frame.pack()
+
+#run window
+main_window.mainloop()
