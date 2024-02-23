@@ -27,6 +27,13 @@ class FileActions:
             with open(Helpers.FILENAME, "w") as outFile:
                 outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))
 
+    def write_json_root():
+        with open(Helpers.FILENAME, "w") as file:
+            try:
+                json.loads(file)
+            except (TypeError):
+                file.write(json.dumps({Helpers.JSON_ROOT:[]}))
+
     # Writing data to existing json log.
     def write_to_json(task_desc, task_finished = False):
 
