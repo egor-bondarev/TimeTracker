@@ -45,9 +45,16 @@ class FileActions:
                                   Helpers.JSON_TIME_DURATION:str(duration)})
             else:
                 newRecord.append({Helpers.JSON_TASK:task_desc, 
-                                  Helpers.JSON_TIME_STAMP_START:start_timestamp})           
+                                  Helpers.JSON_TIME_STAMP_START:start_timestamp})      
+
+        with open(Helpers.FILENAME, "r+") as outFile:
+                try:
+                    json.load(outFile)
+                except Exception:
+                    outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))     
         
         with open(Helpers.FILENAME,'r+') as file:
+
             file_data = json.load(file)
             number_of_tasks = len(file_data[Helpers.JSON_ROOT])
             current_timestamp = time.strftime(Helpers.TIME_MASK, time.localtime())
@@ -99,6 +106,7 @@ def finish_task(entry_task_desc):
 main_window = tk.Tk()
 main_window.title('TimeTracker')
 main_window.geometry('170x90')
+main_window.attributes("-topmost" , -1)
 
 # input frame
 input_frame = ttk.Frame(master = main_window)
