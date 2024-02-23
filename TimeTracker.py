@@ -23,9 +23,8 @@ class FileActions:
 
     # Check existing log file and create it if not.
     def create_json():
-        if not os.path.exists(Helpers.FILENAME):
-            with open(Helpers.FILENAME, "w") as outFile:
-                outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))
+        open(Helpers.FILENAME, "w")
+        FileActions.write_json_root()
 
     def write_json_root():
         with open(Helpers.FILENAME, "w") as file:
