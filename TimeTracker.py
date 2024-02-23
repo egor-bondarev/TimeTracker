@@ -106,6 +106,7 @@ def finish_task(entry_task_desc):
 main_window = tk.Tk()
 main_window.title('TimeTracker')
 main_window.geometry('170x90')
+main_window.attributes("-topmost" , -1)
 
 # input frame
 input_frame = ttk.Frame(master = main_window)
