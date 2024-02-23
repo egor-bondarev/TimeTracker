@@ -2,9 +2,14 @@ import tkinter as tk
 import os
 import json
 import time
+import threading
+import asyncio
+
+import TimeTracker_analytics
 
 from datetime import date, datetime
 from tkinter import ttk
+from asyncio import new_event_loop, run
 
 # Class with constants.
 class Helpers:
@@ -23,9 +28,15 @@ class FileActions:
 
     # Check existing log file and create it if not.
     def create_json():
-        if not os.path.exists(Helpers.FILENAME):
-            with open(Helpers.FILENAME, "w") as outFile:
-                outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))
+        open(Helpers.FILENAME, "w")
+        FileActions.write_json_root()
+
+    def write_json_root():
+        with open(Helpers.FILENAME, "w") as file:
+            try:
+                json.loads(file)
+            except (TypeError):
+                file.write(json.dumps({Helpers.JSON_ROOT:[]}))
 
     # Writing data to existing json log.
     def write_to_json(task_desc, task_finished = False):
@@ -49,6 +60,7 @@ class FileActions:
         
         with open(Helpers.FILENAME,'r+') as file:
             file_data = json.load(file)
+
             number_of_tasks = len(file_data[Helpers.JSON_ROOT])
             current_timestamp = time.strftime(Helpers.TIME_MASK, time.localtime())
 
@@ -122,7 +134,23 @@ btn_start.pack(side = 'left', padx = 5)
 btn_finish = ttk.Button(master = input_frame, text = "Finish", command = lambda: finish_task(entry_task_desc))
 btn_finish.pack(side = 'left')
 
+
+
+analytic_thread = threading.Thread(target = TimeTracker_analytics.start)
+
+btn_report = ttk.Button(master = input_frame, 
+                        text = "Report", 
+                        command = lambda: analytic_thread.start())
+btn_report.pack(side = 'left')
+
+btn_test = ttk.Button(master = input_frame, 
+                        text = "test", 
+                        command = lambda: TimeTracker_analytics.get_dates())
+btn_test.pack(side = 'right')
+
 input_frame.pack()
 
 #run window
+main_window.wm_attributes("-topmost" , -1)
+main_window.focus_force()
 main_window.mainloop()
