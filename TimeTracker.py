@@ -23,15 +23,9 @@ class FileActions:
 
     # Check existing log file and create it if not.
     def create_json():
-        open(Helpers.FILENAME, "w")
-        FileActions.write_json_root()
-
-    def write_json_root():
-        with open(Helpers.FILENAME, "w") as file:
-            try:
-                json.loads(file)
-            except (TypeError):
-                file.write(json.dumps({Helpers.JSON_ROOT:[]}))
+        if not os.path.exists(Helpers.FILENAME):
+            with open(Helpers.FILENAME, "w") as outFile:
+                outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))
 
     # Writing data to existing json log.
     def write_to_json(task_desc, task_finished = False):
@@ -51,9 +45,16 @@ class FileActions:
                                   Helpers.JSON_TIME_DURATION:str(duration)})
             else:
                 newRecord.append({Helpers.JSON_TASK:task_desc, 
-                                  Helpers.JSON_TIME_STAMP_START:start_timestamp})           
+                                  Helpers.JSON_TIME_STAMP_START:start_timestamp})      
+
+        with open(Helpers.FILENAME, "r+") as outFile:
+                try:
+                    json.load(outFile)
+                except Exception:
+                    outFile.write(json.dumps({Helpers.JSON_ROOT:[]}))     
         
         with open(Helpers.FILENAME,'r+') as file:
+
             file_data = json.load(file)
             number_of_tasks = len(file_data[Helpers.JSON_ROOT])
             current_timestamp = time.strftime(Helpers.TIME_MASK, time.localtime())
