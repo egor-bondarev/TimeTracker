@@ -1,8 +1,13 @@
 build/
 dist/
+__pycache__/
 
 *.json
+!user_settings.json
 *.xlsx
+*.log
 *.txt
+!requirements.txt
 Dockerfile
 .DS_Store
+*.pyc
