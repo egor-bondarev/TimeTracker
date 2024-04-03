@@ -49,8 +49,8 @@ class InputController():
     def check_exist_category(self, category_combobox: tkinter.StringVar):
         """ Add category to setting file if it is not exist. """
 
-        cotegories_from_setting = self.inputModel.get_categories()
-        for category in cotegories_from_setting:
+        categories_from_setting = self.inputModel.get_categories()
+        for category in categories_from_setting:
             if category_combobox.get().lower() == str(category).lower():
                 return
 

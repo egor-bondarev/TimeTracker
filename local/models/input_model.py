@@ -23,12 +23,12 @@ class InputModel():
     def validate_json(self):
         """ Check .json file."""
 
-        with open(const.FILENAME, "w+", encoding="utf-8") as file:
-            try:
+        try:
+            with open(file = const.FILENAME, mode = 'r+', encoding = "utf-8") as file:
                 json.load(file)
-            except json.decoder.JSONDecodeError as exception:
-                logger.exception(exception)
-                file.write(json.dumps({const.JSON_ROOT:[]}))
+        except json.decoder.JSONDecodeError as exception:
+            logger.exception(exception)
+            file.write(json.dumps({const.JSON_ROOT:[]}))
 
     def write_to_json(self, task_desc: str, task_category: str, task_finished: bool = False):
         """Add information to .json file."""
@@ -36,7 +36,7 @@ class InputModel():
         self.create_json()
         self.validate_json()
 
-        with open(const.FILENAME,'r+', encoding="utf-8") as file:
+        with open(file = const.FILENAME, mode = 'r+', encoding="utf-8") as file:
             file_data = json.load(file)
             number_of_tasks = len(file_data[const.JSON_ROOT])
             current_timestamp = time.strftime(const.TIME_MASK, time.localtime())
@@ -130,7 +130,6 @@ class InputModel():
 
     def get_categories(self):
         """ Get predefined categories from settings file. """
-
         with open(file = const.USER_SETTINGS_FILE, mode = 'r+', encoding="utf-8") as file:
             file_data = json.load(file)
             return file_data['Categories']
