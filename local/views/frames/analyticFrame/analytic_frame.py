@@ -3,11 +3,11 @@ import tkinter as tk
 from tkinter import ttk, BOTH
 from datetime import datetime
 
-from views.frames.analyticFrame.calendar import CalendarFrame
-from controllers.analytic_controller import AnalyticController
-from helpers.control_states import FilterCheckboxes, FilterCheckboxValues
-from helpers.helpers import DateInterval, ReportButtons
-import helpers.constants as const
+from local.views.frames.analyticFrame.calendar import CalendarFrame
+from local.controllers.analytic_controller import AnalyticController
+from local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
+from local.helpers.helpers import DateInterval, ReportButtons
+import local.helpers.constants as const
 
 class AnalyticFrame():
     """ Description of analytic frame."""
@@ -193,11 +193,12 @@ class AnalyticFrame():
         btn_report = ttk.Button(
             master = manage_results_frame,
             text = 'Report',
-            command = lambda: self.controller.show_report(get_date_interval(self),
-                                                          get_checkboxes_values(self),
-                                                          get_report_buttons(),
-                                                          results_frame
-                                                          )
+            command = lambda: self.controller.show_report(
+                get_date_interval(self),
+                get_checkboxes_values(self),
+                get_report_buttons(),
+                results_frame
+                )
         )
 
         btn_clear['state'] = 'disabled'

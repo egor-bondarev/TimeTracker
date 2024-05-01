@@ -1,6 +1,8 @@
 build/
 dist/
 __pycache__/
+tasktracker
+.pytest_cache/
 
 *.json
 !user_settings.json

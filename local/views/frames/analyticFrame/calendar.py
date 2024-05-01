@@ -4,8 +4,8 @@ from tkinter import ttk, S
 from datetime import datetime
 from tkcalendar import Calendar
 
-from controllers.analytic_controller import AnalyticController
-import helpers.constants as const
+from local.controllers.analytic_controller import AnalyticController
+import local.helpers.constants as const
 
 class CalendarFrame:
     """Calendar class"""
@@ -21,17 +21,18 @@ class CalendarFrame:
 
         date_object = datetime.strptime(date, const.DATE_MASK)
 
-        calendar_frame = Calendar(calendar_window,
-                       selectmode = 'day',
-                       year = date_object.year,
-                       month = date_object.month,
-                       day = date_object.day)
+        calendar_frame = Calendar(
+            calendar_window,
+            selectmode = 'day',
+            year = date_object.year,
+            month = date_object.month,
+            day = date_object.day)
 
         btn_enter = ttk.Button(
-           master = calendar_window,
-           text = "Enter",
-           command = lambda: self.actions.calendar_set_date(calendar_frame, calendar_window, entry)
-           )
+            master = calendar_window,
+            text = "Enter",
+            command = lambda: self.actions.calendar_set_date(calendar_frame, calendar_window, entry)
+            )
         btn_enter.pack(anchor = S)
 
         calendar_frame.pack(pady = 20)
