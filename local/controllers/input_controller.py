@@ -1,8 +1,8 @@
 """ Actions on input frame. """
 import tkinter
 
-from models.input_model import InputModel
-from helpers.control_states import InputFrameAllControls
+from local.models.input_model import InputModel
+from local.helpers.control_states import InputFrameAllControls
 
 class InputController():
     """ Actions class. """
@@ -29,10 +29,12 @@ class InputController():
             True)
 
         self.change_widgets_states(controls_state, True)
+        controls_state.category_value.set('')
 
-    def change_widgets_states(self,
-                              controls_state: InputFrameAllControls,
-                              task_finished: bool):
+    def change_widgets_states(
+        self,
+        controls_state: InputFrameAllControls,
+        task_finished: bool):
         """ Changing widgets state. """
 
         if task_finished:
@@ -41,9 +43,10 @@ class InputController():
             controls_state.entry_value.set('')
         else:
             status = 'disabled'
+            self.limit_desc_length_with_block(100, controls_state)
+            controls_state.btn_start['state'] = status
 
         controls_state.entry['state'] = status
-        controls_state.btn_start['state'] = status
         controls_state.category_combobox['state'] = status
 
     def check_exist_category(self, category_combobox: tkinter.StringVar):
@@ -59,3 +62,18 @@ class InputController():
     def show_categories(self):
         """ Get categories from settings file. """
         return self.inputModel.get_categories()
+
+    def limit_desc_length_with_block(self, limit:int, controls_state: InputFrameAllControls):
+        """ Limit entry count letters and block Start and Finish buttons. """
+        if len(controls_state.entry_value.get()) > 0:
+            controls_state.entry_value.set(controls_state.entry_value.get()[:limit])
+            controls_state.btn_start['state'] = 'enabled'
+            controls_state.btn_finish['state'] = 'enabled'
+        else:
+            controls_state.btn_start['state'] = 'disabled'
+            controls_state.btn_finish['state'] = 'disabled'
+
+    def limit_category_name(self, limit: int, controls_state: InputFrameAllControls):
+        """ Limit new category name. """
+        if len(controls_state.category_value.get()) > limit:
+            controls_state.category_value.set(controls_state.category_value.get()[:limit])

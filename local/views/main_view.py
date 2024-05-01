@@ -2,8 +2,8 @@
 import tkinter as tk
 from tkinter import ttk, BOTH
 
-from views.frames.input_frame import InputFrame
-from views.frames.analyticFrame.analytic_frame import AnalyticFrame
+from local.views.frames.input_frame import InputFrame
+from local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
 
 class MainView():
     """Main window."""
@@ -17,7 +17,7 @@ class MainView():
         notebook = ttk.Notebook(self.main_window)
         notebook.pack(expand=True, fill=BOTH)
 
-        input_frame = InputFrame(notebook)
+        input_frame = InputFrame(notebook, self.main_window)
         analytic_frame = AnalyticFrame(notebook)
 
         notebook.add(input_frame.view(), text="Time")

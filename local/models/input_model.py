@@ -4,9 +4,9 @@ import time
 import os
 import logging
 from datetime import datetime
-import helpers.constants as const
+import local.helpers.constants as const
 
-from helpers.record_info import RecordInfo
+from local.helpers.record_info import RecordInfo
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ class InputModel():
         if not os.path.exists(const.FILENAME):
             with open(const.FILENAME, "w", encoding="utf-8") as file:
                 file.write(json.dumps({const.JSON_ROOT:[]}))
+                logger.info('JSON file created.')
 
     def validate_json(self):
         """ Check .json file."""
@@ -116,17 +117,27 @@ class InputModel():
                 const.JSON_TIME_STAMP_START: task_record.start_timestamp,
                 const.JSON_TIME_STAMP_END: task_record.end_timestamp,
                 const.JSON_TIME_DURATION: task_record.task_duration})
+
+            logger.info(" <Description>: %s <Category>: %s <Start time>: %s <Finish time>: %s" \
+                " <Duration>: %s", task_record.desc, task_record.category,
+                task_record.start_timestamp, task_record.end_timestamp, task_record.task_duration)
         else:
             new_record.append({
                 const.JSON_TASK: task_record.desc,
                 const.JSON_CATEGORY: task_record.category,
                 const.JSON_TIME_STAMP_START: task_record.start_timestamp})
 
+            logger.info(" <Description>: %s <Category>: %s <Start time>: %s", 
+                        task_record.desc, task_record.category, task_record.start_timestamp)
+
     def add_to_record(self, node, task_record: RecordInfo):
         """ Add information to existed record. """
 
         node[const.JSON_TIME_STAMP_END] = task_record.end_timestamp
         node[const.JSON_TIME_DURATION] = task_record.task_duration
+
+        logger.info(" <Finish time>: %s <Duration>: %s", 
+                    task_record.end_timestamp, task_record.task_duration)
 
     def get_categories(self):
         """ Get predefined categories from settings file. """

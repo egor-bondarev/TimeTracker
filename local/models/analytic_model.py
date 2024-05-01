@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import dataclasses
 import logging
 
-import helpers.constants as const
-from helpers.record_info import RecordForView
-from helpers.helpers import DateInterval, CheckboxRecordFile
+import local.helpers.constants as const
+from local.helpers.record_info import RecordForView
+from local.helpers.helpers import DateInterval, CheckboxRecordFile
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +66,9 @@ class AnalyticModel():
 
                 for record in file_data[const.JSON_ROOT]:
                     try:
-                        new_record: RecordForView = self.add_info_from_one_record(record,
-                                                                                  checkbox_states)
+                        new_record: RecordForView = self.add_info_from_one_record(
+                            record,
+                            checkbox_states)
 
                         if checkbox_states['Date']:
                             new_record.date = file[:-5]
@@ -100,10 +101,11 @@ class AnalyticModel():
 
         return date_period
 
-    def get_statistic(self,
-                      date_interval: DateInterval,
-                      checkbox_states: dict,
-                      merge: bool) -> list[list[str]]:
+    def get_statistic(
+        self,
+        date_interval: DateInterval,
+        checkbox_states: dict,
+        merge: bool) -> list[list[str]]:
         """ Preparing statistic for table view. """
 
         get_data = self.get_info_from_files(date_interval, checkbox_states)

@@ -4,9 +4,9 @@ from datetime import datetime
 from tkinter import ttk, BOTH, RIGHT, BOTTOM
 from tkcalendar import Calendar
 
-from models.analytic_model import AnalyticModel
-from helpers.control_states import FilterCheckboxes, FilterCheckboxValues
-from helpers.helpers import DateInterval, ReportButtons
+from local.models.analytic_model import AnalyticModel
+from local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
+from local.helpers.helpers import DateInterval, ReportButtons
 
 class AnalyticController():
     """ Actions class. """
@@ -16,9 +16,10 @@ class AnalyticController():
         self.tree_scroll_y = ttk.Scrollbar()
         self.tree_scroll_x = ttk.Scrollbar()
 
-    def change_checkboxes_state(self,
-                              checkboxes: FilterCheckboxes,
-                              checkbox_merge_value: bool = False):
+    def change_checkboxes_state(
+        self,
+        checkboxes: FilterCheckboxes,
+        checkbox_merge_value: bool = False):
         """ Change checkbox state in filter frame. """
         if checkbox_merge_value:
             checkboxes.date['state'] = 'disabled'
@@ -35,9 +36,10 @@ class AnalyticController():
             checkboxes.start_date['state'] = 'enabled'
             checkboxes.finish_date['state'] = 'enabled'
 
-    def change_widgets_states(self,
-                              report_pressed: bool,
-                              report_buttons: ReportButtons):
+    def change_widgets_states(
+        self,
+        report_pressed: bool,
+        report_buttons: ReportButtons):
         """ Change wifgets states after showing report. """
         if report_pressed:
             report_buttons.button_report['state'] = 'disabled'
@@ -46,10 +48,11 @@ class AnalyticController():
             report_buttons.button_report['state'] = 'enabled'
             report_buttons.button_clear['state'] = 'disabled'
 
-    def calendar_set_date(self,
-                          calendar: Calendar,
-                          calendar_window: tk.Tk,
-                          entry: tk.StringVar):
+    def calendar_set_date(
+        self,
+        calendar: Calendar,
+        calendar_window: tk.Tk,
+        entry: tk.StringVar):
         """ Choose date in calendar. """
         current_date = datetime.strptime(calendar.get_date(), '%m/%d/%y')
         entry.set(current_date.date())
@@ -88,13 +91,13 @@ class AnalyticController():
             checkboxes_value.categories_value = True
 
         checkbox_states = {
-                           'Date': checkboxes_value.date_value,
-                           'Description': checkboxes_value.desc_value, 
-                           'Category': checkboxes_value.categories_value,
-                           'Start time': checkboxes_value.start_date_value,
-                           'Finish time': checkboxes_value.finish_date_value,
-                           'Duration': checkboxes_value.duration_value
-                           }
+            'Date': checkboxes_value.date_value,
+            'Description': checkboxes_value.desc_value, 
+            'Category': checkboxes_value.categories_value,
+            'Start time': checkboxes_value.start_date_value,
+            'Finish time': checkboxes_value.finish_date_value,
+            'Duration': checkboxes_value.duration_value
+            }
 
         # List with columns for view.
         display_columns = []
@@ -106,10 +109,11 @@ class AnalyticController():
 
         # Creating heading for table.
         for column in display_columns:
-            self.tree.heading(column,
-                              text = column,
-                              command = lambda column_index = column:
-                              self.sort(column_index, False))
+            self.tree.heading(
+                column,
+                text = column,
+                command = lambda column_index = column:
+                self.sort(column_index, False))
 
         # Get statistic for view.
         statistic_data = self.model.get_statistic(
@@ -126,15 +130,17 @@ class AnalyticController():
 
     def add_scrollbars(self, frame: ttk.Frame):
         """ Add scrollbars to result table view. """
-        self.tree_scroll_y = ttk.Scrollbar(master=frame,
-                                           command=self.tree.yview,
-                                           orient ="vertical")
+        self.tree_scroll_y = ttk.Scrollbar(
+            master=frame,
+            command=self.tree.yview,
+            orient ="vertical")
         self.tree.configure(yscrollcommand=self.tree_scroll_y.set)
         self.tree_scroll_y.pack(side= RIGHT, fill= BOTH)
 
-        self.tree_scroll_x = ttk.Scrollbar(master=frame,
-                                           command=self.tree.xview,
-                                           orient='horizontal')
+        self.tree_scroll_x = ttk.Scrollbar(
+            master=frame,
+            command=self.tree.xview,
+            orient='horizontal')
         self.tree.configure(xscrollcommand=self.tree_scroll_x.set)
         self.tree_scroll_x.pack(side= BOTTOM, fill= BOTH)
 
@@ -148,12 +154,14 @@ class AnalyticController():
 
     def sort(self, column_number: int, descending: bool):
         """ Sort data in the column. """
-        column_data = [(self.tree.set(item, column_number), item)
-                       for item in self.tree.get_children("")]
+        column_data = [
+            (self.tree.set(item, column_number), item)
+            for item in self.tree.get_children("")]
         column_data.sort(reverse = descending)
 
         for index, (_, item) in enumerate(column_data):
             self.tree.move(item, '', index)
 
-        self.tree.heading(column_number,
-                          command = lambda: self.sort(column_number, not descending))
+        self.tree.heading(
+            column_number,
+            command = lambda: self.sort(column_number, not descending))

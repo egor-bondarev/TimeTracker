@@ -2,31 +2,32 @@
 import tkinter as tk
 
 from tkinter import ttk
-from controllers.input_controller import InputController
-from helpers.control_states import InputFrameAllControls
+from local.controllers.input_controller import InputController
+from local.helpers.control_states import InputFrameAllControls
 
 class InputFrame():
     """Class for implementing input frame."""
-    def __init__(self, notebook: ttk.Notebook):
+    def __init__(self, notebook: ttk.Notebook, main_window):
         self.notebook = notebook
+        self.main_window = main_window
         self.input_frame = ttk.Frame(notebook)
         # entry field
-        self.entry = ttk.Entry()
+        self.entry = ttk.Entry(name = 'description entry')
 
         # start button
-        self.btn_start = ttk.Button()
+        self.btn_start = ttk.Button(name = 'start button')
 
         # finish button
-        self.btn_finish = ttk.Button()
-        self.category_combobox = ttk.Combobox()
+        self.btn_finish = ttk.Button(name = 'finish button')
+        self.category_combobox = ttk.Combobox(name = 'category combobox')
+
+        self.entry_task_desc = tk.StringVar(name = 'description value')
+        self.category_value = tk.StringVar(value = '', name = 'category value')
 
         self.actions = InputController()
 
     def view(self) -> tk.Frame:
         """View for elements inside frame."""
-
-        entry_task_desc = tk.StringVar()
-        category_value = tk.StringVar(value='')
 
         def get_controls_state(self):
             return InputFrameAllControls(
@@ -34,8 +35,8 @@ class InputFrame():
                 btn_finish = self.btn_finish,
                 category_combobox = self.category_combobox,
                 entry = self.entry,
-                category_value = category_value,
-                entry_value = entry_task_desc
+                category_value = self.category_value,
+                entry_value = self.entry_task_desc
                 )
 
         entry_frame = ttk.Frame(self.input_frame)
@@ -44,7 +45,13 @@ class InputFrame():
             master = entry_frame,
             width = 100,
             font = ("default", 10),
-            textvariable = entry_task_desc)
+            textvariable = self.entry_task_desc)
+
+        self.entry_task_desc.trace_add(
+            "write",
+            lambda *args: self.actions.limit_desc_length_with_block(
+                100,
+                get_controls_state(self)))
 
         self.entry.bind('<Shift-KeyPress-Return>',
                         lambda event: self.actions.start_task(get_controls_state(self)))
@@ -61,11 +68,16 @@ class InputFrame():
             self.category_combobox['values'] = self.actions.show_categories()
 
         self.category_combobox = ttk.Combobox(
-            textvariable = category_value,
+            textvariable = self.category_value,
             master = category_frame,
             values = self.actions.show_categories(),
             postcommand = update_combobox_values
             )
+        self.category_value.trace_add(
+            "write",
+            lambda *args: self.actions.limit_category_name(
+                20,
+                get_controls_state(self)))
         self.category_combobox.pack(side = 'left')
 
         #start button
@@ -74,14 +86,16 @@ class InputFrame():
         self.btn_start = ttk.Button(
             master = buttons_frame,
             text = "Start",
-            command = lambda: self.actions.start_task(get_controls_state(self)))
+            command = lambda: self.actions.start_task(get_controls_state(self)),
+            state = 'disabled')
         self.btn_start.pack(side = 'left')
 
         #finish button
         self.btn_finish = ttk.Button(
             master = buttons_frame,
             text = "Finish",
-            command = lambda: self.actions.finish_task(get_controls_state(self)))
+            command = lambda: self.actions.finish_task(get_controls_state(self)),
+            state = 'disabled')
         self.btn_finish.pack(side = 'left')
 
         return self.input_frame
