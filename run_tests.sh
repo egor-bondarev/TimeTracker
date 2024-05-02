@@ -16,7 +16,6 @@ help(){
     echo "options:"
     echo "h         print this help information"
     echo "c         clean previous allure results"
-    echo "o         open allure report in browser"
     echo
 }
 
