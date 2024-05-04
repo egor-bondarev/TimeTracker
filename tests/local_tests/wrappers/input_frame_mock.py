@@ -1,15 +1,10 @@
 """ Class for connecting to InputFrameController. """
 import tkinter as tk
 from tkinter import ttk
+from tests.local_tests.test_helpers.structures import ControlStateEnum
 from local.helpers.control_states import InputFrameAllControls
 from local.controllers.input_controller import InputController
 from local.views.frames.input_frame import InputFrame
-
-class ControlStateEnum():
-    """ Class with widget available states. """
-    ENABLED: str = 'enabled'
-    DISABLED: str = 'disabled'
-    NORMAL: str = 'normal'
 
 class InputFrameMock():
     """ Class for implementing user actions. """

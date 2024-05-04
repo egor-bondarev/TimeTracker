@@ -1,18 +1,145 @@
+""" Main test for analytic frame. """
 import pytest
 import allure
 
-from tests.local_tests.wrappers.input_frame_mock import InputFrameMock
-from tests.local_tests.test_helpers.json_helper import JsonHelper
-from tests.local_tests.asserts.asserts import Asserts, ExpectedValues
-from tests.local_tests.test_helpers.generators import Generators
+from tests.local_tests.wrappers.analytic_frame_mock import AnalyticFrameMock
+from tests.local_tests.asserts.asserts import Asserts
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")
-@allure.title("test")
+@allure.title("Default widgets states and values")
+@pytest.mark.parametrize(('create_filled_json'), [(2, 0)], indirect=True)
 @pytest.mark.order(1)
-def test():
-    """ Test"""
+def test_default_state(create_filled_json):
+    """ Default widgets states and values"""
 
-    #Generators.generate_timestamp_pair()
-    print(JsonHelper.create_json_file_filled(0))
-    assert 1 == 2
+    test_json_files = create_filled_json
+    analytic_frame = AnalyticFrameMock()
+
+    Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
+    Asserts.assert_analytic_frame_default_values(
+        analytic_frame.get_widgets_value(),
+        test_json_files[0],
+        test_json_files[1])
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Widgets states and values after report")
+@pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
+@pytest.mark.order(2)
+def test_state_after_reporting(create_filled_json):
+    """ Widgets states and values after report """
+
+    test_json_files = create_filled_json
+    analytic_frame = AnalyticFrameMock()
+    analytic_frame.press_button_report()
+
+    Asserts.assert_analytic_frame_report_state(analytic_frame.get_widgets())
+    Asserts.assert_analytic_frame_report_values(
+        analytic_frame.get_widgets_value(),
+        test_json_files[0],
+        test_json_files[1])
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Widgets states and values after cleaning report")
+@pytest.mark.parametrize(('create_filled_json'), [(2, 0)], indirect=True)
+@pytest.mark.order(3)
+def test_state_after_cleaning_report(create_filled_json):
+    """ Widgets states and values after cleaning report """
+    test_json_files = create_filled_json
+
+    analytic_frame = AnalyticFrameMock()
+    analytic_frame.press_button_report()
+    analytic_frame.press_button_clear()
+
+    Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
+    Asserts.assert_analytic_frame_default_values(
+        analytic_frame.get_widgets_value(),
+        test_json_files[0],
+        test_json_files[1])
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Checkboxes states saved after cleaning report")
+@pytest.mark.order(4)
+def test_checkboxes_state_saved_after_cleaning_report():
+    """ Checkboxes states saved after cleaning report """
+
+    analytic_frame = AnalyticFrameMock()
+
+    analytic_frame.set_checkbox_value('Date', False)
+    analytic_frame.set_checkbox_value('Start time', False)
+    analytic_frame.set_checkbox_value('Duration', False)
+    analytic_frame.press_button_report()
+    analytic_frame.press_button_clear()
+
+    Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().date_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().startdate_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().duration_filter_checkbox, False)
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Checkboxes are disabled if merge is enabled")
+@pytest.mark.order(5)
+def test_checkboxes_state_disabled_when_merge_enabled():
+    """ Checkboxes are disabled if merge is enabled """
+
+    analytic_frame = AnalyticFrameMock()
+    analytic_frame.set_checkbox_value('Merge category', True)
+
+    Asserts.assert_analytic_frame_merge_default_states(analytic_frame.get_widgets())
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Checkboxes values saved after on and off merge")
+@pytest.mark.order(6)
+def test_checkboxes_values_saveded_after_merge_on_off():
+    """ Checkboxes values saved after on and off merge """
+
+    analytic_frame = AnalyticFrameMock()
+
+    analytic_frame.set_checkbox_value('Date', False)
+    analytic_frame.set_checkbox_value('Start time', False)
+    analytic_frame.set_checkbox_value('Duration', False)
+
+    analytic_frame.set_checkbox_value('Merge category', True)
+    analytic_frame.set_checkbox_value('Merge category', False)
+
+    Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().date_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().startdate_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().duration_filter_checkbox, False)
+
+@allure.epic("Analytic Frame")
+@allure.feature("Main scenarios")
+@allure.title("Checkboxes values saved after on and off merge and reporting")
+@pytest.mark.order(7)
+def test_checkboxes_values_saveded_after_merge_and_report_on_off():
+    """ Checkboxes values saved after on and off merge and reporting"""
+
+    analytic_frame = AnalyticFrameMock()
+
+    analytic_frame.set_checkbox_value('Date', False)
+    analytic_frame.set_checkbox_value('Start time', False)
+    analytic_frame.set_checkbox_value('Duration', False)
+
+    analytic_frame.set_checkbox_value('Merge category', True)
+    analytic_frame.press_button_report()
+    analytic_frame.press_button_clear()
+    analytic_frame.set_checkbox_value('Merge category', False)
+
+    Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().date_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().startdate_filter_checkbox, False)
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().duration_filter_checkbox, False)

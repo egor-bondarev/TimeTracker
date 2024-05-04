@@ -4,6 +4,7 @@ import json
 import time
 import os
 import uuid
+import re
 from pathlib import Path
 import pytest
 import local.helpers.constants as const
@@ -15,14 +16,21 @@ sys.path.append(str(Path(__file__).parent.parent))
 @pytest.fixture(autouse=True)
 def setup_function():
     """ Remove .json file before and after test. """
-    if os.path.exists(const.FILENAME):
-        os.remove(const.FILENAME)
+    file_list = [files for files in os.listdir('./')
+                if (re.search(r'\d{4}-\d\d-\d\d.json$', files))
+                ]
+    for file in file_list:
+        os.remove(file)
+
     user_categories = __get_user_categories()
 
     yield
 
-    if os.path.exists(const.FILENAME):
-        os.remove(const.FILENAME)
+    file_list_after_tests = [files for files in os.listdir('./')
+                            if (re.search(r'\d{4}-\d\d-\d\d.json$', files))
+                            ]
+    for file in file_list_after_tests:
+        os.remove(file)
 
     __clean_test_categories(user_categories)
 

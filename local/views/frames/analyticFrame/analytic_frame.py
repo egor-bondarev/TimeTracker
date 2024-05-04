@@ -15,84 +15,33 @@ class AnalyticFrame():
     def __init__(self, notebook: ttk.Notebook):
         """ Initialise frame. """
         self.controller = AnalyticController()
-        
         self.notebook = notebook
         self.analytic_frame = ttk.Frame(notebook)
+
         self.period_date_frame = ttk.Frame(self.analytic_frame)
-        
         self.start_date_frame = ttk.Frame(self.period_date_frame)
-        self.entry_start_date_value = tk.StringVar(name = 'value start date')
-        self.entry_start_date = ttk.Entry(
-            master = self.start_date_frame,
-            textvariable = self.entry_start_date_value,
-            name = 'entry start date')
-        self.btn_change_start_date = ttk.Button(name = 'button start date')
-
         self.end_date_frame = ttk.Frame(self.period_date_frame)
-        self.entry_end_date_value = tk.StringVar(name = 'value end date')
-        self.entry_end_date = ttk.Entry(
-            master = self.end_date_frame,
-            textvariable = self.entry_end_date_value,
-            name = 'entry end date')
-        self.btn_change_end_date = ttk.Button(name = 'button end date')
-        
-
         self.settings_frame = ttk.Labelframe(self.analytic_frame)
         self.checkboxes_frame = ttk.Frame(self.settings_frame)
         self.checkboxes_frame_2 = ttk.Frame(self.settings_frame)
         self.checkboxes_frame_3 = ttk.Frame(self.settings_frame)
-        
-        self.checkbox_date_value = tk.BooleanVar(value=True)
-        self.checkbox_desc_value = tk.BooleanVar(value=True)
-        self.checkbox_st_value = tk.BooleanVar(value=True)
-        self.checkbox_ft_value = tk.BooleanVar(value=True)
-        self.checkbox_categories_value = tk.BooleanVar(value=True)
-        self.checkbox_duration_value = tk.BooleanVar(value=True)
-        
-        self.checkbox_date = ttk.Checkbutton(
-            master = self.checkboxes_frame,
-            text = 'Date',
-            variable = self.checkbox_date_value,
-            name = 'checkbox column date')
-        self.checkbox_desc = ttk.Checkbutton(
-            master = self.checkboxes_frame,
-            text = 'Description',
-            variable = self.checkbox_desc_value,
-            name = 'checkbox column description')
-        self.checkbox_st = ttk.Checkbutton(
-            master = self.checkboxes_frame,
-            text = 'Start time',
-            variable = self.checkbox_st_value,
-            name = 'checkbox column start time')
 
-        self.checkbox_ft = ttk.Checkbutton(
-            master = self.checkboxes_frame_2,
-            text = 'Finish time',
-            variable = self.checkbox_ft_value,
-            name = 'checkbox column finish time')
-        self.checkbox_categories = ttk.Checkbutton(
-            master = self.checkboxes_frame_2,
-            text = 'Categories',
-            variable = self.checkbox_categories_value,
-            name = 'checkbox column category')
+        self.checkbox_date_value = tk.BooleanVar(value = True, name = 'checkbox date value')
+        self.checkbox_desc_value = tk.BooleanVar(value = True, name = 'checkbox desc value')
+        self.checkbox_st_value = tk.BooleanVar(value = True, name = 'checkbox start time value')
+        self.checkbox_ft_value = tk.BooleanVar(value = True, name = 'checkbox finish time value')
+        self.checkbox_categories_value = tk.BooleanVar(
+            value = True,
+            name = 'checkbox categories value')
+        self.checkbox_duration_value = tk.BooleanVar(value = True, name = 'checkbox duration value')
 
-        self.checkbox_duration = ttk.Checkbutton(
-            master = self.checkboxes_frame_3,
-            text = 'Duration',
-            variable = self.checkbox_duration_value,
-            name = 'checkbox column duration')
-
-        self.checkbox_merge_by_category = tk.BooleanVar(value=False)
+        self.checkbox_merge_by_category = tk.BooleanVar(
+            value = False,
+            name = 'checkbox merge by category')
         self.merge_frame = ttk.Labelframe(self.analytic_frame, text = 'Merge by')
-        self.merge_cat_checkbox = ttk.Checkbutton(
-            name = 'checkbox merge categories')
 
         self.manage_results_frame = ttk.Frame(self.analytic_frame)
         self.results_frame = ttk.Labelframe(self.analytic_frame, text = 'Result')
-        self.btn_clear = ttk.Button(
-            name = 'button clear result')
-        self.btn_report = ttk.Button(
-            name = 'button report')
 
         self.checkboxes_value = FilterCheckboxValues(
             date_value = self.checkbox_date_value.get(),
@@ -104,15 +53,36 @@ class AnalyticFrame():
             merge_categories_value = self.checkbox_merge_by_category.get()
             )
 
+        self.entry_start_date_value = tk.StringVar(name = 'value start date')
+        self.entry_start_date = ttk.Entry(name = 'entry start date')
+        self.btn_change_start_date = ttk.Button(name = 'button start date')
+
+        self.entry_end_date_value = tk.StringVar(name = 'value end date')
+        self.entry_end_date = ttk.Entry(name = 'entry end date')
+        self.btn_change_end_date = ttk.Button(name = 'button end date')
+
+        self.checkbox_date = ttk.Checkbutton(name = 'checkbox column date')
+        self.checkbox_desc = ttk.Checkbutton(name = 'checkbox column description')
+        self.checkbox_st = ttk.Checkbutton(name = 'checkbox column start time')
+        self.checkbox_ft = ttk.Checkbutton(name = 'checkbox column finish time')
+        self.checkbox_categories = ttk.Checkbutton(name = 'checkbox column category')
+        self.checkbox_duration = ttk.Checkbutton(name = 'checkbox column duration')
+        self.merge_cat_checkbox = ttk.Checkbutton(name = 'checkbox merge categories')
+
+        self.btn_clear = ttk.Button(name = 'button clear result')
+        self.btn_report = ttk.Button(name = 'button report')
+        self.tree = ttk.Treeview(master = self.results_frame, name = 'tree result')
+
     def view(self) -> tk.Frame:
         """ Analytic frame view. """
 
         label_start_date = ttk.Label(master = self.start_date_frame, text = "Start date: ", width=7)
 
         start_date = self.controller.get_date(True)
+        self.entry_start_date = ttk.Entry(
+            master = self.start_date_frame,
+            textvariable = self.entry_start_date_value)
         self.entry_start_date_value.set(start_date)
-
-        
 
         self.btn_change_start_date = ttk.Button(
             master = self.start_date_frame,
@@ -126,14 +96,14 @@ class AnalyticFrame():
         self.entry_start_date.pack(fill = 'x', side = 'left')
         self.btn_change_start_date.pack(padx=3, side = 'left')
 
-
-        
-        # Widgets for end date.
         label_end_date = ttk.Label(master = self.end_date_frame, text = "End date: ", width=7)
 
         end_date = self.controller.get_date()
-        self.entry_end_date_value.set(end_date)
 
+        self.entry_end_date = ttk.Entry(
+            master = self.end_date_frame,
+            textvariable = self.entry_end_date_value)
+        self.entry_end_date_value.set(end_date)
 
         self.btn_change_end_date = ttk.Button(
             master = self.end_date_frame,
@@ -147,11 +117,36 @@ class AnalyticFrame():
         self.btn_change_end_date.pack(padx=3, side = 'left')
 
         # Choice columns.
-
         self.settings_frame.pack(fill = 'x')
         self.checkboxes_frame.pack(side = 'left', anchor = 'nw')
         self.checkboxes_frame_2.pack(side = 'left', anchor = 'nw')
         self.checkboxes_frame_3.pack(side = 'left', anchor = 'nw')
+        self.checkbox_date = ttk.Checkbutton(
+            master = self.checkboxes_frame,
+            text = 'Date',
+            variable = self.checkbox_date_value)
+        self.checkbox_desc = ttk.Checkbutton(
+            master = self.checkboxes_frame,
+            text = 'Description',
+            variable = self.checkbox_desc_value)
+        self.checkbox_st = ttk.Checkbutton(
+            master = self.checkboxes_frame,
+            text = 'Start time',
+            variable = self.checkbox_st_value)
+
+        self.checkbox_ft = ttk.Checkbutton(
+            master = self.checkboxes_frame_2,
+            text = 'Finish time',
+            variable = self.checkbox_ft_value)
+        self.checkbox_categories = ttk.Checkbutton(
+            master = self.checkboxes_frame_2,
+            text = 'Categories',
+            variable = self.checkbox_categories_value)
+
+        self.checkbox_duration = ttk.Checkbutton(
+            master = self.checkboxes_frame_3,
+            text = 'Duration',
+            variable = self.checkbox_duration_value)
 
         self.checkbox_date.pack(side = 'top', anchor = 'nw')
         self.checkbox_desc.pack(side = 'top', anchor = 'nw')
@@ -160,7 +155,6 @@ class AnalyticFrame():
         self.checkbox_categories.pack(side = 'top', anchor = 'nw')
         self.checkbox_ft.pack(side = 'top', anchor = 'nw')
         self.checkbox_duration.pack(side = 'top', anchor = 'nw')
-
 
         self.merge_cat_checkbox = ttk.Checkbutton(
             master = self.merge_frame,
@@ -177,7 +171,7 @@ class AnalyticFrame():
         self.btn_clear = ttk.Button(
             master = self.manage_results_frame,
             text = 'Clear',
-            command = lambda: self.controller.clear_report(get_report_buttons(self))
+            command = lambda: self.controller.clear_report(get_report_buttons())
         )
 
         checkboxes_states = FilterCheckboxes(
@@ -200,12 +194,12 @@ class AnalyticFrame():
                 duration_value = self.checkbox_duration_value.get(),
                 merge_categories_value = self.checkbox_merge_by_category.get())
 
-        def get_date_interval(self):
+        def get_date_interval():
             return DateInterval(
                 date_start = datetime.strptime(self.entry_start_date_value.get(), const.DATE_MASK),
                 date_finish = datetime.strptime(self.entry_end_date_value.get(), const.DATE_MASK))
 
-        def get_report_buttons(self):
+        def get_report_buttons():
             return ReportButtons(
                 button_report = self.btn_report,
                 button_clear = self.btn_clear
@@ -216,9 +210,9 @@ class AnalyticFrame():
             master = self.manage_results_frame,
             text = 'Report',
             command = lambda: self.controller.show_report(
-                get_date_interval(self),
+                get_date_interval(),
                 get_checkboxes_values(self),
-                get_report_buttons(self),
+                get_report_buttons(),
                 self.results_frame
                 )
         )
