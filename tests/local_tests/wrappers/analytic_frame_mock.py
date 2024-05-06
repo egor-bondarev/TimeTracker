@@ -9,6 +9,7 @@ from local.controllers.analytic_controller import AnalyticController
 from local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
 from local.helpers.helpers import DateInterval, ReportButtons
 from tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, AnalyticWidgetsWithValue
+from local.views.frames.analyticFrame.calendar import CalendarFrame
 
 class AnalyticFrameMock():
     """ Test class for Analytic frame and connection with view and controller. """
@@ -19,6 +20,8 @@ class AnalyticFrameMock():
         notebook = ttk.Notebook(self.main_window)
         self.analytic_view = AnalyticFrame(notebook)
         self.analytic_view.view()
+
+        self.calendar_frame = CalendarFrame()
 
     def get_widgets(self) -> AnalyticFrameWidgets:
         """ Return control widgets. """
@@ -137,4 +140,42 @@ class AnalyticFrameMock():
                 self.analytic_controller.change_checkboxes_state(checkboxes_states, value)
 
         checkbox.set(value)
-    
+
+    def press_change_end_date_button(self):
+        """ Press change button for end date. """
+        widgets_with_value = self.get_widgets_value()
+        self.calendar_frame.view(
+            self.analytic_controller.get_date(False),
+            widgets_with_value.end_date_entry.get())
+
+    def get_date_from_calendar(self):
+        """ Return current date from calendar frame. """
+        return self.calendar_frame.calendar_frame.selection_get().isoformat()
+
+    def press_change_start_date_button(self):
+        """ Press change button for start date. """
+        widgets_with_value = self.get_widgets_value()
+        self.calendar_frame.view(
+            self.analytic_controller.get_date(True),
+            widgets_with_value.start_date_entry.get())
+
+    def press_select_date_in_calendar(self, date: str, date_widget_type: str):
+        """ Press select button on the calendar frame. """
+        date_object = datetime.strptime(date, const.DATE_MASK)
+        widgets_with_value = self.get_widgets_value()
+        start_flag = False
+        if date_widget_type == 'end':
+            date_widget_type = widgets_with_value.end_date_entry
+        elif date_widget_type == 'start':
+            date_widget_type = widgets_with_value.start_date_entry
+            start_flag = True
+        else:
+            assert False, \
+                f'date_type parameter has value {date_widget_type}, but expected start or end. '
+
+        date_widget_type.set(date)
+        self.calendar_frame.view(
+            self.analytic_controller.get_date(start_flag),
+            date_widget_type.get())
+
+        self.calendar_frame.calendar_frame.selection_set(date_object)

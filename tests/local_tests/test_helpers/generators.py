@@ -42,15 +42,12 @@ class Generators():
     @staticmethod
     def generate_json_filename() -> str:
         """ Generate random date for json filename. """
-        mm = Generators.generate_number_two_ranks(1, 12)
-        dd = Generators.generate_number_two_ranks(1, 28)
-        yy = date.today().year
 
-        return f'{yy}-{mm}-{dd}.json'
+        return f'{Generators.generate_date()}.json'
 
     @staticmethod
     def generate_timestamp_pair() -> tuple[str, str, str]:
-        """ Generate random timestamp."""
+        """ Generate random timestamp. """
 
         hh1 = Generators.generate_number_two_ranks(0, 23)
         hh2_greater_hh1 = True
@@ -70,3 +67,13 @@ class Generators():
                     datetime.strptime(start_timestamp, const.TIME_MASK))
 
         return (start_timestamp, finish_timestamp, str(duration))
+
+    @staticmethod
+    def generate_date() -> str:
+        """ Generate new date in the format YYYY-MM-DD. """
+
+        mm = Generators.generate_number_two_ranks(1, 12)
+        dd = Generators.generate_number_two_ranks(1, 28)
+        yy = date.today().year
+
+        return f'{yy}-{mm}-{dd}'
