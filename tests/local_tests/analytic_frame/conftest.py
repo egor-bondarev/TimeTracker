@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 import pytest
-from tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
 
 sys.path.append(str(Path(__file__).parent.parent))
 

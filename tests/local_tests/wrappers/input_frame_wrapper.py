@@ -1,12 +1,12 @@
 """ Class for connecting to InputFrameController. """
 import tkinter as tk
 from tkinter import ttk
-from tests.local_tests.test_helpers.structures import ControlStateEnum
-from local.helpers.control_states import InputFrameAllControls
-from local.controllers.input_controller import InputController
-from local.views.frames.input_frame import InputFrame
+from TaskTracker.tests.local_tests.test_helpers.structures import ControlStateEnum
+from TaskTracker.local.helpers.control_states import InputFrameAllControls
+from TaskTracker.local.controllers.input_controller import InputController
+from TaskTracker.local.views.frames.input_frame import InputFrame
 
-class InputFrameMock():
+class InputFrameWrapper():
     """ Class for implementing user actions. """
     def __init__(self):
         self.input_controller = InputController()

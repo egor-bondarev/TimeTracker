@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from tkinter import ttk
 import tkinter as tk
-
+from typing import Optional
 
 class ControlStateEnum():
     """ Class with widget available states. """
@@ -58,3 +58,21 @@ class AnalyticWidgetsWithValue:
     duration_filter_checkbox: tk.BooleanVar
     category_merge_checkbox: tk.BooleanVar
     tree_result: list
+
+@dataclass
+class TreeResults:
+    """ Result in the tree widget. """
+    date: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+    start_time: Optional[str] = None
+    finish_time: Optional[str] = None
+    duration: Optional[str] = None
+
+    def __eq__(self, tree_results):
+        return self.date == tree_results.date and \
+            self.description == tree_results.description and \
+                self.category == tree_results.category and \
+                    self.start_time ==tree_results.start_time and \
+                        self.finish_time == tree_results.finish_time and \
+                            self.duration == tree_results.duration

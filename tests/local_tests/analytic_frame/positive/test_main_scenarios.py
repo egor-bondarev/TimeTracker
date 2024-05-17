@@ -2,8 +2,8 @@
 import pytest
 import allure
 
-from tests.local_tests.wrappers.analytic_frame_mock import AnalyticFrameMock
-from tests.local_tests.asserts.asserts import Asserts
+from TaskTracker.tests.local_tests.wrappers.analytic_frame_wrapper import AnalyticFrameWrapper
+from TaskTracker.tests.local_tests.asserts.asserts import Asserts
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")
@@ -14,7 +14,7 @@ def test_default_state(create_filled_json):
     """ Default widgets states and values"""
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
     Asserts.assert_analytic_frame_default_values(
@@ -31,7 +31,7 @@ def test_state_after_reporting(create_filled_json):
     """ Widgets states and values after report """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_report_state(analytic_frame.get_widgets())
@@ -49,7 +49,7 @@ def test_state_after_cleaning_report(create_filled_json):
     """ Widgets states and values after cleaning report """
     test_json_files = create_filled_json
 
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
     analytic_frame.press_button_report()
     analytic_frame.press_button_clear()
 
@@ -66,7 +66,7 @@ def test_state_after_cleaning_report(create_filled_json):
 def test_checkboxes_state_saved_after_cleaning_report():
     """ Checkboxes states saved after cleaning report """
 
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     analytic_frame.set_checkbox_value('Date', False)
     analytic_frame.set_checkbox_value('Start time', False)
@@ -89,7 +89,7 @@ def test_checkboxes_state_saved_after_cleaning_report():
 def test_checkboxes_state_disabled_when_merge_enabled():
     """ Checkboxes are disabled if merge is enabled """
 
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
     analytic_frame.set_checkbox_value('Merge category', True)
 
     Asserts.assert_analytic_frame_merge_default_states(analytic_frame.get_widgets())
@@ -101,7 +101,7 @@ def test_checkboxes_state_disabled_when_merge_enabled():
 def test_checkboxes_values_saveded_after_merge_on_off():
     """ Checkboxes values saved after on and off merge """
 
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     analytic_frame.set_checkbox_value('Date', False)
     analytic_frame.set_checkbox_value('Start time', False)
@@ -125,7 +125,7 @@ def test_checkboxes_values_saveded_after_merge_on_off():
 def test_checkboxes_values_saveded_after_merge_and_report_on_off():
     """ Checkboxes values saved after on and off merge and reporting"""
 
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     analytic_frame.set_checkbox_value('Date', False)
     analytic_frame.set_checkbox_value('Start time', False)

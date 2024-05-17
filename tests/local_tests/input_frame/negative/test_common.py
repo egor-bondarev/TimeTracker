@@ -3,21 +3,21 @@
 import os
 import pytest
 import allure
-import local.helpers.constants as const
+import TaskTracker.local.helpers.constants as const
 
-from tests.local_tests.wrappers.input_frame_mock import InputFrameMock
-from tests.local_tests.test_helpers.json_helper import JsonHelper
-from tests.local_tests.asserts.asserts import Asserts, ExpectedValues
-from tests.local_tests.test_helpers.generators import Generators
+from TaskTracker.tests.local_tests.wrappers.input_frame_wrapper import InputFrameWrapper
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.tests.local_tests.asserts.asserts import Asserts, ExpectedValues
+from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 
 @allure.epic("Input Frame")
 @allure.feature("Common")
 @allure.title("Description has length more than max")
 @pytest.mark.order(1)
 def test_description_more_than_max_length():
-    """ Finish task without start where description has max length """
+    """ Finish task without start where description has max length. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(101, 'random')
     json_helper = JsonHelper()
 
@@ -43,9 +43,9 @@ def test_description_more_than_max_length():
 @allure.title("Category has length more than max")
 @pytest.mark.order(2)
 def test_category_more_than_max_length():
-    """ Finish task without start where category has max length """
+    """ Finish task without start where category has max length. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
 
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(21, 'random')
@@ -74,13 +74,14 @@ def test_category_more_than_max_length():
 @allure.title("First record finished without starting")
 @pytest.mark.order(3)
 def test_finish_without_start_first_record():
-    """ Finish task without start where json not existed before """
+    """ Finish task without start where json not existed before. """
 
     assert not os.path.exists(const.FILENAME)
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(Generators.generate_number(1, 20), 'random')
+
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
     input_frame.press_button_finish()
@@ -92,6 +93,7 @@ def test_finish_without_start_first_record():
         duration_value = 'Ending Timestamp for previous action NOT FOUND',
         category_value = category_value
     )
+
     Asserts.assert_record_finished_task(last_record, expected_values, duration_error=True)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
@@ -101,6 +103,7 @@ def test_finish_without_start_first_record():
 @allure.title("Empty categories list")
 @pytest.mark.order(4)
 def test_no_categories(clean_return_user_categories):
-    """ No categories in combobox """    
-    input_frame = InputFrameMock()
+    """ No categories in combobox. """
+
+    input_frame = InputFrameWrapper()
     assert input_frame.show_available_categories() == []

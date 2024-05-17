@@ -2,9 +2,9 @@
 import pytest
 import allure
 
-from tests.local_tests.wrappers.analytic_frame_mock import AnalyticFrameMock
-from tests.local_tests.asserts.asserts import Asserts
-from tests.local_tests.test_helpers.generators import Generators
+from TaskTracker.tests.local_tests.wrappers.analytic_frame_wrapper import AnalyticFrameWrapper
+from TaskTracker.tests.local_tests.asserts.asserts import Asserts
+from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 
 @allure.epic("Analytic Frame")
 @allure.feature("Calendar")
@@ -12,10 +12,10 @@ from tests.local_tests.test_helpers.generators import Generators
 @pytest.mark.parametrize(('create_filled_json'), [(1, 1)], indirect=True)
 @pytest.mark.order(1)
 def test_one_json_file(create_filled_json):
-    """ One date for both date fields """
+    """ One date for both date fields. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
@@ -27,11 +27,12 @@ def test_one_json_file(create_filled_json):
 @allure.title("Correct dates in fields for three json files")
 @pytest.mark.parametrize(('create_filled_json'), [(3, 1)], indirect=True)
 @pytest.mark.order(2)
+@pytest.mark.timeout(2)
 def test_three_json_files(create_filled_json):
-    """ Correct dates in fields for three json files """
+    """ Correct dates in fields for three json files. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
@@ -44,19 +45,22 @@ def test_three_json_files(create_filled_json):
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(3)
 def test_end_date_frame_has_newer_date(create_filled_json):
-    """ End date calendar frame with newer date """
+    """ End date calendar frame with newer date. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
         test_json_files[0],
         test_json_files[1])
 
-    analytic_frame.press_change_end_date_button()
+    new_end_date = Generators.generate_date()
+    analytic_frame.set_end_date(new_end_date)
 
-    assert analytic_frame.get_date_from_calendar() == test_json_files[1]
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().end_date_entry,
+        new_end_date)
 
 @allure.epic("Analytic Frame")
 @allure.feature("Calendar")
@@ -64,19 +68,22 @@ def test_end_date_frame_has_newer_date(create_filled_json):
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(4)
 def test_start_date_frame_has_older_date(create_filled_json):
-    """ Start date calendar frame with older date """
+    """ Start date calendar frame with older date. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
         test_json_files[0],
         test_json_files[1])
 
-    analytic_frame.press_change_start_date_button()
+    new_start_date = Generators.generate_date()
+    analytic_frame.set_start_date(new_start_date)
 
-    assert analytic_frame.get_date_from_calendar() == test_json_files[0]
+    Asserts.assert_widget_value_is_equal(
+        analytic_frame.get_widgets_value().start_date_entry,
+        new_start_date)
 
 @allure.epic("Analytic Frame")
 @allure.feature("Calendar")
@@ -84,10 +91,10 @@ def test_start_date_frame_has_older_date(create_filled_json):
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(5)
 def test_set_start_date_in_calendar(create_filled_json):
-    """ Set new start date in the calendar frame """
+    """ Set new start date in the calendar frame. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
@@ -106,10 +113,10 @@ def test_set_start_date_in_calendar(create_filled_json):
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(6)
 def test_set_end_date_in_calendar(create_filled_json):
-    """ Set new end date in the calendar frame """
+    """ Set new end date in the calendar frame. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
@@ -128,10 +135,10 @@ def test_set_end_date_in_calendar(create_filled_json):
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(7)
 def test_set_both_dates_in_calendar(create_filled_json):
-    """ Set both dates in the calendar frame """
+    """ Set both dates in the calendar frame. """
 
     test_json_files = create_filled_json
-    analytic_frame = AnalyticFrameMock()
+    analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),

@@ -43,7 +43,8 @@ class AnalyticModel():
             if checkbox_states[item.checkbox_name]:
                 try:
                     setattr(new_record, item.record_field, record[item.json_field])
-                except KeyError:
+                except KeyError as exception:
+                    logger.exception(exception)
                     setattr(new_record, item.record_field, '')
 
         return new_record

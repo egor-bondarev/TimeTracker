@@ -4,10 +4,10 @@ import time
 import pytest
 import allure
 
-from tests.local_tests.wrappers.input_frame_mock import InputFrameMock
-from tests.local_tests.test_helpers.json_helper import JsonHelper
-from tests.local_tests.asserts.asserts import Asserts, ExpectedValues
-from tests.local_tests.test_helpers.generators import Generators
+from TaskTracker.tests.local_tests.wrappers.input_frame_wrapper import InputFrameWrapper
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.tests.local_tests.asserts.asserts import Asserts, ExpectedValues
+from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 
 @allure.epic("Input Frame")
 @allure.feature("Start then finish")
@@ -16,9 +16,10 @@ from tests.local_tests.test_helpers.generators import Generators
 def test_record_added_to_existed_json(add_one_task_to_json):
     """ After start and finish task added to json. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(Generators.generate_number(1, 20), 'random')
+
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
     input_frame.press_button_start()
@@ -44,7 +45,7 @@ def test_record_added_to_existed_json(add_one_task_to_json):
 def test_description_and_category_previous_values(add_one_task_to_json):
     """ Start and finish task where description and category have values from previous record. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     json_helper = JsonHelper()
     previous_record = json_helper.get_last_record()
     previous_desc = previous_record['Action']
@@ -75,10 +76,11 @@ def test_description_and_category_previous_values(add_one_task_to_json):
 def test_two_same_tasks():
     """ Two same record in json result file.  """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
 
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(Generators.generate_number(1, 20), 'random')
+
     for _ in range(2):
         input_frame.set_task_description(desc_value)
         input_frame.set_category(category_value)
@@ -88,6 +90,7 @@ def test_two_same_tasks():
     json_helper = JsonHelper()
     first_record = json_helper.get_record_by_number(0)
     second_record = json_helper.get_record_by_number(1)
+
     Asserts.assert_settings_category_not_added(category_value)
     assert first_record['Action'] == second_record['Action']
     assert first_record['Category'] == second_record['Category']

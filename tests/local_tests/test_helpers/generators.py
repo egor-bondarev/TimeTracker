@@ -1,9 +1,10 @@
 """ Helper class with generators. """
 import random
 import string
-from datetime import datetime
-from datetime import date
-import local.helpers.constants as const
+import os
+import re
+from datetime import datetime, timedelta, date
+import TaskTracker.local.helpers.constants as const
 
 class Generators():
     """ Classs for generation test data. """
@@ -28,6 +29,8 @@ class Generators():
     @staticmethod
     def generate_number(min_value: int, max_value: int) -> int:
         """ Generate a random int. """
+        if max_value == 0:
+            return 1
         return random.randint(min_value, max_value)
 
     @staticmethod
@@ -49,14 +52,12 @@ class Generators():
     def generate_timestamp_pair() -> tuple[str, str, str]:
         """ Generate random timestamp. """
 
-        hh1 = Generators.generate_number_two_ranks(0, 23)
-        hh2_greater_hh1 = True
-        while hh2_greater_hh1:
-            hh2 = Generators.generate_number_two_ranks(0, 23)
-            if hh2 > hh1:
-                hh2_greater_hh1 = False
+        hh1 = Generators.generate_number_two_ranks(0, 12)
+        hh2 = Generators.generate_number_two_ranks(13, 23)
+
         mm1 = Generators.generate_number_two_ranks(0, 59)
         mm2 = Generators.generate_number_two_ranks(0, 59)
+
         ss1 = Generators.generate_number_two_ranks(0, 59)
         ss2 = Generators.generate_number_two_ranks(0, 59)
 
@@ -72,8 +73,27 @@ class Generators():
     def generate_date() -> str:
         """ Generate new date in the format YYYY-MM-DD. """
 
-        mm = Generators.generate_number_two_ranks(1, 12)
-        dd = Generators.generate_number_two_ranks(1, 28)
-        yy = date.today().year
+        dates = [files for files in os.listdir('./') if re.search(
+                r'\d{4}-\d\d-\d\d.json$',
+                files)]
 
-        return f'{yy}-{mm}-{dd}'
+        if len(dates) != 0:
+            dates.sort()
+            # 5 - is minimum days between dates
+            delta_dd = timedelta(days = float(Generators.generate_number_two_ranks(7, 30)))
+
+            result_date = datetime.strptime(str(dates[-1][:-5]), const.DATE_MASK) + delta_dd
+
+            return datetime.strftime(result_date, const.DATE_MASK)
+
+        return f'{date.today().year}-{Generators.generate_number_two_ranks(1, 12)}-{Generators.generate_number_two_ranks(1, 28)}'
+
+    @staticmethod
+    def generate_date_in_interval(start_date, finish_date) -> str:
+        """ Generate new date in interval. """
+        left_border = datetime.strptime(str(start_date), const.DATE_MASK)
+        right_border = datetime.strptime(str(finish_date), const.DATE_MASK)
+
+        delta = timedelta(days = (right_border - left_border).days // 2)
+
+        return datetime.strftime(left_border + delta, const.DATE_MASK)

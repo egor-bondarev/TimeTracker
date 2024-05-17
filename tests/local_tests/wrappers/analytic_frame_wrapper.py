@@ -1,17 +1,20 @@
 """ Class for connecting to  analytic controller. """
+import re
+import os
 import tkinter as tk
 from tkinter import ttk
 
 from datetime import datetime
-import local.helpers.constants as const
-from local.helpers.control_states import FilterCheckboxValues, FilterCheckboxes
-from local.controllers.analytic_controller import AnalyticController
-from local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
-from local.helpers.helpers import DateInterval, ReportButtons
-from tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, AnalyticWidgetsWithValue
-from local.views.frames.analyticFrame.calendar import CalendarFrame
+import TaskTracker.local.helpers.constants as const
+from TaskTracker.local.helpers.control_states import FilterCheckboxValues, FilterCheckboxes
+from TaskTracker.local.helpers.helpers import DateInterval, ReportButtons
+from TaskTracker.local.controllers.analytic_controller import AnalyticController
+from TaskTracker.local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
+from TaskTracker.local.views.frames.analyticFrame.calendar import CalendarFrame
+from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, \
+    AnalyticWidgetsWithValue, TreeResults, ControlStateEnum
 
-class AnalyticFrameMock():
+class AnalyticFrameWrapper():
     """ Test class for Analytic frame and connection with view and controller. """
     def __init__(self):
         self.analytic_controller = AnalyticController()
@@ -19,9 +22,31 @@ class AnalyticFrameMock():
         self.main_window = tk.Tk()
         notebook = ttk.Notebook(self.main_window)
         self.analytic_view = AnalyticFrame(notebook)
-        self.analytic_view.view()
+        self.__set_default_settings()
 
         self.calendar_frame = CalendarFrame()
+
+    def __set_default_dates(self):
+        """ Set start date and end date for initialization. """
+
+        file_list = [files for files in os.listdir('./')
+                    if (re.search(r'\d{4}-\d\d-\d\d.json$', files)
+        )]
+        file_list.sort()
+
+        if len(file_list) == 0:
+            self.analytic_view.entry_start_date_value.set(str(datetime.date(datetime.now())))
+            self.analytic_view.entry_end_date_value.set(str(datetime.date(datetime.now())))
+        else:
+            self.analytic_view.entry_start_date_value.set(file_list[0][:-5])
+            self.analytic_view.entry_end_date_value.set(file_list[-1][:-5])
+
+    def __set_default_settings(self):
+        self.__set_default_dates()
+        self.__set_default_widget_states()
+
+    def __set_default_widget_states(self):
+        self.analytic_view.btn_clear['state'] = ControlStateEnum.DISABLED
 
     def get_widgets(self) -> AnalyticFrameWidgets:
         """ Return control widgets. """
@@ -141,23 +166,9 @@ class AnalyticFrameMock():
 
         checkbox.set(value)
 
-    def press_change_end_date_button(self):
-        """ Press change button for end date. """
-        widgets_with_value = self.get_widgets_value()
-        self.calendar_frame.view(
-            self.analytic_controller.get_date(False),
-            widgets_with_value.end_date_entry.get())
-
     def get_date_from_calendar(self):
         """ Return current date from calendar frame. """
         return self.calendar_frame.calendar_frame.selection_get().isoformat()
-
-    def press_change_start_date_button(self):
-        """ Press change button for start date. """
-        widgets_with_value = self.get_widgets_value()
-        self.calendar_frame.view(
-            self.analytic_controller.get_date(True),
-            widgets_with_value.start_date_entry.get())
 
     def press_select_date_in_calendar(self, date: str, date_widget_type: str):
         """ Press select button on the calendar frame. """
@@ -179,3 +190,44 @@ class AnalyticFrameMock():
             date_widget_type.get())
 
         self.calendar_frame.calendar_frame.selection_set(date_object)
+
+    def get_results_from_table(self) -> dict:
+        """ Return results from tree in dictionary. """
+        widgets = self.get_widgets()
+        results = {}
+
+        for line in widgets.tree_result.get_children():
+            line_content = widgets.tree_result.item(line)['values']
+            one_line_result = TreeResults()
+            column_num = 0
+
+            for column in widgets.tree_result['columns']:
+                match column:
+                    case 'Date':
+                        one_line_result.date=str(line_content[column_num])
+                    case 'Description':
+                        one_line_result.description=str(line_content[column_num])
+                    case 'Category':
+                        one_line_result.category=str(line_content[column_num])
+                    case 'Start time':
+                        one_line_result.start_time=str(line_content[column_num])
+                    case 'Finish time':
+                        one_line_result.finish_time=str(line_content[column_num])
+                    case 'Duration':
+                        one_line_result.duration=str(line_content[column_num])
+
+                column_num += 1
+
+            results[line] = one_line_result
+
+        return results
+
+    def set_start_date(self, new_value):
+        """ Set start date value to the entry field. """
+        widgets = self.get_widgets_value()
+        widgets.start_date_entry.set(new_value)
+
+    def set_end_date(self, new_value):
+        """ Set end date value to the entry field. """
+        widgets = self.get_widgets_value()
+        widgets.end_date_entry.set(new_value)

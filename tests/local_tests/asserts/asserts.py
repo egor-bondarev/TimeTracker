@@ -1,11 +1,15 @@
 """ Class with customs asserts. """
 import re
+import json
 from dataclasses import dataclass
 from typing import Optional
-from tests.local_tests.wrappers.input_frame_mock import ControlStateEnum
-from tests.local_tests.test_helpers.json_helper import JsonHelper
-from local.helpers.control_states import InputFrameAllControls
-from tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, AnalyticWidgetsWithValue
+from TaskTracker.tests.local_tests.test_helpers.structures import ControlStateEnum
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.local.helpers.control_states import InputFrameAllControls
+from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, \
+    AnalyticWidgetsWithValue, TreeResults
+from TaskTracker.tests.local_tests.test_helpers.helpers import Helpers
+import TaskTracker.local.helpers.constants as const
 
 @dataclass
 class ExpectedValues:
@@ -19,7 +23,7 @@ class ExpectedValues:
 class Asserts():
     """ Custom asserts. """
 
-# Asserts for widgets state
+# Asserts for widgets states and values.
     @staticmethod
     def __get_widget_name(widget):
         if type(widget).__name__ in ['StringVar', 'BooleanVar']:
@@ -35,8 +39,8 @@ class Asserts():
 
         assert str(widget['state']) in \
             [ControlStateEnum.NORMAL, ControlStateEnum.ENABLED], \
-            f"Control {widget_name} has state {widget['state']} but expected " \
-                f"{ControlStateEnum.NORMAL} or {ControlStateEnum.ENABLED}"
+            f"Control \'{widget_name}\' has state \'{widget['state']}\' but expected " \
+                f"\'{ControlStateEnum.NORMAL}\' or \'{ControlStateEnum.ENABLED}\'"
 
     @staticmethod
     def assert_widget_is_disabled(widget):
@@ -45,8 +49,8 @@ class Asserts():
         widget_name = Asserts.__get_widget_name(widget)
 
         assert str(widget['state']) == ControlStateEnum.DISABLED, \
-            f"Control {widget_name} has state {widget['state']} but expected " \
-                f"{ControlStateEnum.DISABLED}"
+            f"Control \'{widget_name}\' has state \'{widget['state']}\' but expected " \
+                f"\'{ControlStateEnum.DISABLED}\'"
 
     @staticmethod
     def assert_widget_value_is_empty(widget):
@@ -55,7 +59,7 @@ class Asserts():
         widget_name = Asserts.__get_widget_name(widget)
 
         assert widget.get() == '', \
-            f"Widget {widget_name} has value {widget.get()} but expected empty"
+            f"Widget \'{widget_name}\' has value \'{widget.get()}\' but expected empty"
 
     @staticmethod
     def assert_widget_value_is_equal(widget, expected_value):
@@ -63,8 +67,8 @@ class Asserts():
 
         widget_name = Asserts.__get_widget_name(widget)
 
-        assert widget.get() == expected_value, \
-            f"Widget {widget_name} has value {widget.get()} but expected {expected_value}"        
+        assert str(widget.get()) == str(expected_value), \
+            f"Widget \'{widget_name}\' has value \'{widget.get()}\' but expected \'{expected_value}\'"        
 
     @staticmethod
     def assert_controls_state_started_task(widgets: InputFrameAllControls):
@@ -166,12 +170,13 @@ class Asserts():
             widgets.duration_filter_checkbox
         ]
         for widget in true_checkboxes_list:
+            print(widget)
             Asserts.assert_widget_value_is_equal(widget, True)
 
         Asserts.assert_widget_value_is_equal(widgets.category_merge_checkbox, False)
         Asserts.assert_widget_value_is_equal(widgets.start_date_entry, start_date)
         Asserts.assert_widget_value_is_equal(widgets.end_date_entry, end_date)
-        assert widgets.tree_result['columns'] == ''
+        assert widgets.tree_result['columns'] == '', 'Results are not empty.'
 
     @staticmethod
     def assert_analytic_frame_report_state(widgets: AnalyticFrameWidgets):
@@ -217,7 +222,7 @@ class Asserts():
         Asserts.assert_widget_value_is_equal(widgets.category_merge_checkbox, False)
         Asserts.assert_widget_value_is_equal(widgets.start_date_entry, start_date)
         Asserts.assert_widget_value_is_equal(widgets.end_date_entry, end_date)
-        assert widgets.tree_result['columns'] != ''
+        assert widgets.tree_result['columns'] != '', 'Results are empty.'
 
     @staticmethod
     def assert_analytic_frame_merge_checkboxes_state(widgets: AnalyticFrameWidgets):
@@ -274,15 +279,88 @@ class Asserts():
 
         Asserts.assert_widget_is_disabled(widgets.report_btn)
 
-# Asserts for records in json
+    @staticmethod
+    def assert_analytic_frame_results_is_empty(table_results: dict):
+        """ Assert that result tree is empty. """
+
+        assert len(table_results) == 0, 'Results are not empty.'
+
+    @staticmethod
+    def assert_analytic_frame_results_is_not_empty(
+        table_results: dict,
+        widget_values: AnalyticWidgetsWithValue,
+        file_list: list[str]):
+        """ Assert that result tree is not empty. """
+
+        Asserts.assert_widget_value_is_equal(widget_values.category_merge_checkbox, False)
+        checkboxes_false_value = []
+
+        checkboxes_list = [
+            widget_values.date_filter_checkbox.get(),
+            widget_values.desc_filter_checkbox.get(),
+            widget_values.startdate_filter_checkbox.get(),
+            widget_values.enddate_filter_checkbox.get(),
+            widget_values.category_filter_checkbox.get(),
+            widget_values.duration_filter_checkbox.get()
+        ]
+
+        for checkbox in checkboxes_list:
+            if checkbox is False:
+                checkboxes_false_value.append(checkbox)
+
+        expected_result = {}
+        row_number = 1
+
+        for file in file_list:
+            with open(f'{file}.json','r+', encoding="utf-8") as json_file:
+                file_data = json.load(json_file)
+                for record in file_data[const.JSON_ROOT]:
+                    row = TreeResults()
+
+                    row.date = Helpers.add_field_by_conditions(
+                        widget_values.date_filter_checkbox.get(),
+                        file)
+                    row.description = Helpers.add_field_by_conditions(
+                        widget_values.desc_filter_checkbox.get(),
+                        record[const.JSON_TASK])
+                    row.category = Helpers.add_field_by_conditions(
+                        widget_values.category_filter_checkbox.get(),
+                        record[const.JSON_CATEGORY])
+                    row.start_time = Helpers.add_field_by_conditions(
+                        widget_values.startdate_filter_checkbox.get(),
+                        record[const.JSON_TIME_STAMP_START])
+                    row.finish_time = Helpers.add_field_by_conditions(
+                        widget_values.enddate_filter_checkbox.get(),
+                        record[const.JSON_TIME_STAMP_END])
+                    row.duration = Helpers.add_field_by_conditions(
+                        widget_values.duration_filter_checkbox.get(),
+                        record[const.JSON_TIME_DURATION])
+
+                    expected_result[row_number] = row
+                    row_number += 1
+
+        # Comparing expected and real result.
+        true_counter = 0
+        assert len(table_results) == len(expected_result), 'Rows count is not equal expected value'
+
+        for expected_value in expected_result.values():
+            for real_value in table_results.values():
+                if expected_value == real_value:
+                    true_counter += 1
+                    break
+
+        assert true_counter == len(expected_result), \
+            'Results are not matching with expected values.'
+
+# Asserts for records in json.
     @staticmethod
     def __assert_record_is_equal(record_value, expected_value):
         assert str(record_value) == str(expected_value), \
-            f"{record_value} is not equal expected value: {expected_value}"
+            f"Record value \'{record_value}\' is not equal expected value: \'{expected_value}\'"
 
     @staticmethod
     def __assert_record_is_not_empty(record_value, field_name):
-        assert str(record_value) != '', f"{field_name} is empty"
+        assert str(record_value) != '', f"Field \'{field_name}\' is empty."
 
     @staticmethod
     def assert_record_started_task(record, expected_values: ExpectedValues):
@@ -320,23 +398,23 @@ class Asserts():
             Asserts.__assert_record_is_not_empty(record['Duration'], 'Duration')
 
         assert re.fullmatch(r'\d{2}:\d{2}:\d{2}', record['EndTimestamp']) is not None, \
-            f"{record['EndTimestamp']} is not matching with mask"
+            f"Value of EndTimestamp \'{record['EndTimestamp']}\' is not matching with mask"
 
         assert re.fullmatch(r'\d{2}:\d{2}:\d{2}', record['StartTimestamp']) is not None, \
-            f"{record['StartTimestamp']} is not matching with mask"
+            f"The value of StartTimestamp \'{record['StartTimestamp']}\' is not matching with mask"
 
         if not duration_error:
             assert re.fullmatch(r'\d{1}:\d{2}:\d{2}', record['Duration']) is not None, \
-                f"{record['Duration']} is not matching with mask"
+                f"The value of Duration \'{record['Duration']}\' is not matching with mask"
 
-# Asserts for user_settings.json
+# Asserts for user_settings.json.
     @staticmethod
     def assert_settings_category_not_added(category: str):
         """ Assert that new added category doesn't repeat in settings file. """
         categories_list = JsonHelper.get_categories()
         count = categories_list.count(category.lower())
 
-        assert count == 1, f"Category {category} contains in user_settings.json" \
+        assert count == 1, f"Category \'{category}\' contains in user_settings.json" \
             f" {count} times but expected 1."
 
     @staticmethod
@@ -344,4 +422,4 @@ class Asserts():
         """ Assert that new category was added in user_settings.json. """
         categories_list = JsonHelper.get_categories()
         assert category.lower() in categories_list, \
-            f"New category {category} was not found in user_settings.json"
+            f"New category \'{category}\' was not found in user_settings.json"

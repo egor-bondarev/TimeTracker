@@ -3,19 +3,19 @@
 import pytest
 import allure
 
-from tests.local_tests.wrappers.input_frame_mock import InputFrameMock
-from tests.local_tests.test_helpers.json_helper import JsonHelper
-from tests.local_tests.asserts.asserts import Asserts, ExpectedValues
-from tests.local_tests.test_helpers.generators import Generators
+from TaskTracker.tests.local_tests.wrappers.input_frame_wrapper import InputFrameWrapper
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.tests.local_tests.asserts.asserts import Asserts, ExpectedValues
+from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 
 @allure.epic("Input Frame")
 @allure.feature("Finish without start")
 @allure.title("Description max length")
 @pytest.mark.order(1)
 def test_description_max_length(add_one_task_to_json):
-    """ Finish task without start where description has max length """
+    """ Finish task without start where description has max length. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(100, 'random')
     json_helper = JsonHelper()
     previous_record = json_helper.get_record_by_number(0)
@@ -41,8 +41,8 @@ def test_description_max_length(add_one_task_to_json):
 @pytest.mark.order(2)
 @pytest.mark.parametrize("content_type", [('russian'), ('punctuation')])
 def test_description_content_type(add_one_task_to_json, content_type):
-    """ Description content type """
-    input_frame = InputFrameMock()
+    """ Description content type. """
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), content_type)
 
     json_helper = JsonHelper()
@@ -68,8 +68,8 @@ def test_description_content_type(add_one_task_to_json, content_type):
 @pytest.mark.order(3)
 @pytest.mark.parametrize("content_type", [('russian'), ('punctuation')])
 def test_category_content_type(add_one_task_to_json, content_type):
-    """ Category content type """
-    input_frame = InputFrameMock()
+    """ Category content type. """
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(Generators.generate_number(1, 20), content_type)
 
@@ -100,11 +100,14 @@ def test_category_content_type(add_one_task_to_json, content_type):
 @pytest.mark.parametrize(
     ('add_categories_to_settings'), [(1, Generators.generate_number(1, 19))], indirect=True)
 def test_category_existed_value(add_one_task_to_json, add_categories_to_settings):
-    """ Finish task without start task with existed category """
-    input_frame = InputFrameMock()
+    """ Finish task without start task with existed category. """
+
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
+
     category_value = add_categories_to_settings[0]
     Asserts.assert_settings_category_added(category_value.lower())
+
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
     input_frame.press_button_finish()
@@ -113,6 +116,7 @@ def test_category_existed_value(add_one_task_to_json, add_categories_to_settings
     previous_record = json_helper.get_record_by_number(0)
     previous_finish_time = previous_record['EndTimestamp']
     last_record = json_helper.get_last_record()
+
     expected_values = ExpectedValues(
         action_value = desc_value,
         start_time_value = previous_finish_time,
@@ -128,11 +132,12 @@ def test_category_existed_value(add_one_task_to_json, add_categories_to_settings
 @allure.title("Category max length")
 @pytest.mark.order(5)
 def test_category_max_length(add_one_task_to_json):
-    """ Finish task without start where category has max length """
+    """ Finish task without start where category has max length. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(20, 'random')
+
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
     input_frame.press_button_finish()
@@ -155,9 +160,9 @@ def test_category_max_length(add_one_task_to_json):
 @allure.title("Using description from previous record")
 @pytest.mark.order(6)
 def test_description_previous_value(add_one_task_to_json):
-    """ Finish task without start where description has value from previous record """
+    """ Finish task without start where description has value from previous record. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     json_helper = JsonHelper()
     previous_record = json_helper.get_last_record()
     previous_desc = previous_record['Action']
@@ -182,10 +187,11 @@ def test_description_previous_value(add_one_task_to_json):
 @allure.title("Using description and category from previous record")
 @pytest.mark.order(7)
 def test_description_and_category_previous_values(add_one_task_to_json):
-    """ Finish task without start with description and category have values from previous record """
+    """ Finish task without start with description and category have values from previous record. """
 
-    input_frame = InputFrameMock()
+    input_frame = InputFrameWrapper()
     json_helper = JsonHelper()
+
     previous_record = json_helper.get_record_by_number(0)
     previous_desc = previous_record['Action']
     previous_category = previous_record['Category']
