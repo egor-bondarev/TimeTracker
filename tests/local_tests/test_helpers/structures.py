@@ -1,14 +1,24 @@
 """ Helping structures for tests. """
 from dataclasses import dataclass
 from tkinter import ttk
+from enum import Enum
 import tkinter as tk
 from typing import Optional
 
-class ControlStateEnum():
+class ControlStateEnum(str, Enum):
     """ Class with widget available states. """
     ENABLED: str = 'enabled'
     DISABLED: str = 'disabled'
     NORMAL: str = 'normal'
+
+class AnalyticFrameColumnCheckboxesNames(str, Enum):
+    """ Names of column checkboxes. """
+    DATE = 'Date'
+    DESCRIPTION = 'Description'
+    CATEGORY = 'Category'
+    START_TIME = 'Start time'
+    FINISH_TIME = 'Finish time'
+    DURATION = 'Duration'
 
 @dataclass
 class AnalyticFrameWidgets:

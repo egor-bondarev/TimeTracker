@@ -78,13 +78,23 @@ def add_categories_to_settings(request):
     return category_list
 
 @pytest.fixture
-def add_one_task_to_json():
+def add_one_not_finished_task_to_json(category: str = uuid.uuid4()):
+    """ Add one not finished record to json."""
+
+    input_frame = InputFrameWrapper()
+
+    input_frame.set_task_description(uuid.uuid4())
+    input_frame.set_category(category)
+    input_frame.press_button_start()
+
+@pytest.fixture
+def add_one_task_to_json(category: str = uuid.uuid4()):
     """ Add one first record to json."""
 
     input_frame = InputFrameWrapper()
 
     input_frame.set_task_description(uuid.uuid4())
-    input_frame.set_category(uuid.uuid4())
+    input_frame.set_category(category)
     input_frame.press_button_start()
     input_frame.press_button_finish()
 

@@ -1,13 +1,15 @@
 """ Class with customs asserts. """
 import re
 import json
+import os
 from dataclasses import dataclass
 from typing import Optional
+from tkinter import ttk
 from TaskTracker.tests.local_tests.test_helpers.structures import ControlStateEnum
 from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
 from TaskTracker.local.helpers.control_states import InputFrameAllControls
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, \
-    AnalyticWidgetsWithValue, TreeResults
+    AnalyticWidgetsWithValue, TreeResults, AnalyticFrameColumnCheckboxesNames
 from TaskTracker.tests.local_tests.test_helpers.helpers import Helpers
 import TaskTracker.local.helpers.constants as const
 
@@ -308,15 +310,18 @@ class Asserts():
             if checkbox is False:
                 checkboxes_false_value.append(checkbox)
 
+        # Get results from json files.
         expected_result = {}
         row_number = 1
 
         for file in file_list:
+            assert os.path.exists(f'{file}.json'), 'Json file doesn\'t exist.'
+
             with open(f'{file}.json','r+', encoding="utf-8") as json_file:
                 file_data = json.load(json_file)
                 for record in file_data[const.JSON_ROOT]:
                     row = TreeResults()
-
+# TODO: Redo this construction
                     row.date = Helpers.add_field_by_conditions(
                         widget_values.date_filter_checkbox.get(),
                         file)
@@ -329,12 +334,22 @@ class Asserts():
                     row.start_time = Helpers.add_field_by_conditions(
                         widget_values.startdate_filter_checkbox.get(),
                         record[const.JSON_TIME_STAMP_START])
+
+                    if const.JSON_TIME_STAMP_END in record:
+                        value = record[const.JSON_TIME_STAMP_END]
+                    else:
+                        value = ''
                     row.finish_time = Helpers.add_field_by_conditions(
                         widget_values.enddate_filter_checkbox.get(),
-                        record[const.JSON_TIME_STAMP_END])
+                        value)
+
+                    if const.JSON_TIME_DURATION in record:
+                        value = record[const.JSON_TIME_DURATION]
+                    else:
+                        value = ''
                     row.duration = Helpers.add_field_by_conditions(
                         widget_values.duration_filter_checkbox.get(),
-                        record[const.JSON_TIME_DURATION])
+                        value)
 
                     expected_result[row_number] = row
                     row_number += 1
@@ -352,6 +367,22 @@ class Asserts():
         assert true_counter == len(expected_result), \
             'Results are not matching with expected values.'
 
+    @staticmethod
+    def assert_analytic_frame_result_correct_columns(
+        result_tree: ttk.Treeview,
+        exclude_columns: list[AnalyticFrameColumnCheckboxesNames] = None):
+        """ Assert that all turned on columns are exist. """
+
+        if exclude_columns is None:
+            exclude_columns = []
+
+        for checkbox in AnalyticFrameColumnCheckboxesNames:
+            column_displayed = checkbox.value in result_tree['columns']
+            column_ignored = checkbox in exclude_columns
+
+            assert column_displayed != column_ignored, \
+                f"Column displayed must be {column_displayed}, but now is {not column_ignored}"
+
 # Asserts for records in json.
     @staticmethod
     def __assert_record_is_equal(record_value, expected_value):
@@ -365,6 +396,7 @@ class Asserts():
     @staticmethod
     def assert_record_started_task(record, expected_values: ExpectedValues):
         """ Assert for started task record in json. """
+
         Asserts.__assert_record_is_equal(record['Action'], expected_values.action_value)
         Asserts.__assert_record_is_equal(record['Category'], expected_values.category_value)
         Asserts.__assert_record_is_not_empty(record['StartTimestamp'], 'StartTimestamp')
@@ -375,6 +407,7 @@ class Asserts():
         expected_values: ExpectedValues,
         duration_error = False):
         """ Assert for finished task record in json. """
+
         Asserts.__assert_record_is_equal(record['Action'], expected_values.action_value)
         Asserts.__assert_record_is_equal(record['Category'], expected_values.category_value)
 
@@ -411,6 +444,7 @@ class Asserts():
     @staticmethod
     def assert_settings_category_not_added(category: str):
         """ Assert that new added category doesn't repeat in settings file. """
+
         categories_list = JsonHelper.get_categories()
         count = categories_list.count(category.lower())
 
@@ -420,6 +454,7 @@ class Asserts():
     @staticmethod
     def assert_settings_category_added(category: str):
         """ Assert that new category was added in user_settings.json. """
+
         categories_list = JsonHelper.get_categories()
         assert category.lower() in categories_list, \
             f"New category \'{category}\' was not found in user_settings.json"

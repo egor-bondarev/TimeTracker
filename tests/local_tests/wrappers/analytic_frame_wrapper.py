@@ -12,7 +12,7 @@ from TaskTracker.local.controllers.analytic_controller import AnalyticController
 from TaskTracker.local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
 from TaskTracker.local.views.frames.analyticFrame.calendar import CalendarFrame
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, \
-    AnalyticWidgetsWithValue, TreeResults, ControlStateEnum
+    AnalyticWidgetsWithValue, TreeResults, ControlStateEnum, AnalyticFrameColumnCheckboxesNames
 
 class AnalyticFrameWrapper():
     """ Test class for Analytic frame and connection with view and controller. """
@@ -138,17 +138,17 @@ class AnalyticFrameWrapper():
 
         widgets_with_value = self.get_widgets_value()
         match checkbox_name:
-            case 'Date':
+            case AnalyticFrameColumnCheckboxesNames.DATE.value:
                 checkbox = widgets_with_value.date_filter_checkbox
-            case 'Description':
+            case AnalyticFrameColumnCheckboxesNames.DESCRIPTION.value:
                 checkbox = widgets_with_value.desc_filter_checkbox
-            case 'Category':
+            case AnalyticFrameColumnCheckboxesNames.CATEGORY.value:
                 checkbox = widgets_with_value.category_filter_checkbox
-            case 'Start time':
+            case AnalyticFrameColumnCheckboxesNames.START_TIME.value:
                 checkbox = widgets_with_value.startdate_filter_checkbox
-            case 'Finish time':
+            case AnalyticFrameColumnCheckboxesNames.FINISH_TIME.value:
                 checkbox = widgets_with_value.enddate_filter_checkbox
-            case 'Duration':
+            case AnalyticFrameColumnCheckboxesNames.DURATION.value:
                 checkbox = widgets_with_value.duration_filter_checkbox
             case 'Merge category':
                 checkboxes_states = FilterCheckboxes(
@@ -176,18 +176,18 @@ class AnalyticFrameWrapper():
         widgets_with_value = self.get_widgets_value()
         start_flag = False
         if date_widget_type == 'end':
-            date_widget_type = widgets_with_value.end_date_entry
+            date_widget = widgets_with_value.end_date_entry
         elif date_widget_type == 'start':
-            date_widget_type = widgets_with_value.start_date_entry
+            date_widget = widgets_with_value.start_date_entry
             start_flag = True
         else:
             assert False, \
                 f'date_type parameter has value {date_widget_type}, but expected start or end. '
 
-        date_widget_type.set(date)
+        date_widget.set(date)
         self.calendar_frame.view(
             self.analytic_controller.get_date(start_flag),
-            date_widget_type.get())
+            date_widget.get())
 
         self.calendar_frame.calendar_frame.selection_set(date_object)
 
@@ -203,17 +203,17 @@ class AnalyticFrameWrapper():
 
             for column in widgets.tree_result['columns']:
                 match column:
-                    case 'Date':
+                    case AnalyticFrameColumnCheckboxesNames.DATE:
                         one_line_result.date=str(line_content[column_num])
-                    case 'Description':
+                    case AnalyticFrameColumnCheckboxesNames.DESCRIPTION:
                         one_line_result.description=str(line_content[column_num])
-                    case 'Category':
+                    case AnalyticFrameColumnCheckboxesNames.CATEGORY:
                         one_line_result.category=str(line_content[column_num])
-                    case 'Start time':
+                    case AnalyticFrameColumnCheckboxesNames.START_TIME:
                         one_line_result.start_time=str(line_content[column_num])
-                    case 'Finish time':
+                    case AnalyticFrameColumnCheckboxesNames.FINISH_TIME:
                         one_line_result.finish_time=str(line_content[column_num])
-                    case 'Duration':
+                    case AnalyticFrameColumnCheckboxesNames.DURATION:
                         one_line_result.duration=str(line_content[column_num])
 
                 column_num += 1
