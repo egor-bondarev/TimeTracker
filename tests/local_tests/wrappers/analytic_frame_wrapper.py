@@ -168,10 +168,12 @@ class AnalyticFrameWrapper():
 
     def get_date_from_calendar(self):
         """ Return current date from calendar frame. """
+
         return self.calendar_frame.calendar_frame.selection_get().isoformat()
 
     def press_select_date_in_calendar(self, date: str, date_widget_type: str):
         """ Press select button on the calendar frame. """
+
         date_object = datetime.strptime(date, const.DATE_MASK)
         widgets_with_value = self.get_widgets_value()
         start_flag = False
@@ -193,8 +195,10 @@ class AnalyticFrameWrapper():
 
     def get_results_from_table(self) -> dict:
         """ Return results from tree in dictionary. """
+
         widgets = self.get_widgets()
         results = {}
+        line_num = 1
 
         for line in widgets.tree_result.get_children():
             line_content = widgets.tree_result.item(line)['values']
@@ -218,16 +222,28 @@ class AnalyticFrameWrapper():
 
                 column_num += 1
 
-            results[line] = one_line_result
+            results[line_num] = one_line_result
+            line_num += 1
 
         return results
 
     def set_start_date(self, new_value):
         """ Set start date value to the entry field. """
+
         widgets = self.get_widgets_value()
         widgets.start_date_entry.set(new_value)
 
     def set_end_date(self, new_value):
         """ Set end date value to the entry field. """
+
         widgets = self.get_widgets_value()
         widgets.end_date_entry.set(new_value)
+
+    def sort_by_column(self, column_name: str = '', descending: bool = False):
+        """ Sorting by column. """
+
+        columns = self.get_widgets().tree_result['columns']
+
+        assert column_name in columns, f'Column \'{column_name}\' is not visiable in results.'
+
+        self.analytic_controller.sort(columns.index(column_name), descending)

@@ -6,14 +6,6 @@ class Helpers:
     """ Main helper class. """
 
     @staticmethod
-    def add_field_by_conditions(checkbox_widget, value):
-        """ Return value depends on chackbox value. """
-        if checkbox_widget is False:
-            return None
-
-        return value
-
-    @staticmethod
     def set_all_column_checkboxes_true(
         analytic_frame: AnalyticFrameWrapper,
         exclude_list: list = None):

@@ -1,7 +1,5 @@
 """ Class with customs asserts. """
 import re
-import json
-import os
 from dataclasses import dataclass
 from typing import Optional
 from tkinter import ttk
@@ -9,9 +7,7 @@ from TaskTracker.tests.local_tests.test_helpers.structures import ControlStateEn
 from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
 from TaskTracker.local.helpers.control_states import InputFrameAllControls
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameWidgets, \
-    AnalyticWidgetsWithValue, TreeResults, AnalyticFrameColumnCheckboxesNames
-from TaskTracker.tests.local_tests.test_helpers.helpers import Helpers
-import TaskTracker.local.helpers.constants as const
+    AnalyticWidgetsWithValue, AnalyticFrameColumnCheckboxesNames
 
 @dataclass
 class ExpectedValues:
@@ -287,6 +283,7 @@ class Asserts():
 
         assert len(table_results) == 0, 'Results are not empty.'
 
+# TODO: remove this assert
     @staticmethod
     def assert_analytic_frame_results_is_not_empty(
         table_results: dict,
@@ -295,66 +292,8 @@ class Asserts():
         """ Assert that result tree is not empty. """
 
         Asserts.assert_widget_value_is_equal(widget_values.category_merge_checkbox, False)
-        checkboxes_false_value = []
 
-        checkboxes_list = [
-            widget_values.date_filter_checkbox.get(),
-            widget_values.desc_filter_checkbox.get(),
-            widget_values.startdate_filter_checkbox.get(),
-            widget_values.enddate_filter_checkbox.get(),
-            widget_values.category_filter_checkbox.get(),
-            widget_values.duration_filter_checkbox.get()
-        ]
-
-        for checkbox in checkboxes_list:
-            if checkbox is False:
-                checkboxes_false_value.append(checkbox)
-
-        # Get results from json files.
-        expected_result = {}
-        row_number = 1
-
-        for file in file_list:
-            assert os.path.exists(f'{file}.json'), 'Json file doesn\'t exist.'
-
-            with open(f'{file}.json','r+', encoding="utf-8") as json_file:
-                file_data = json.load(json_file)
-                for record in file_data[const.JSON_ROOT]:
-                    row = TreeResults()
-# TODO: Redo this construction
-                    row.date = Helpers.add_field_by_conditions(
-                        widget_values.date_filter_checkbox.get(),
-                        file)
-                    row.description = Helpers.add_field_by_conditions(
-                        widget_values.desc_filter_checkbox.get(),
-                        record[const.JSON_TASK])
-                    row.category = Helpers.add_field_by_conditions(
-                        widget_values.category_filter_checkbox.get(),
-                        record[const.JSON_CATEGORY])
-                    row.start_time = Helpers.add_field_by_conditions(
-                        widget_values.startdate_filter_checkbox.get(),
-                        record[const.JSON_TIME_STAMP_START])
-
-                    if const.JSON_TIME_STAMP_END in record:
-                        value = record[const.JSON_TIME_STAMP_END]
-                    else:
-                        value = ''
-                    row.finish_time = Helpers.add_field_by_conditions(
-                        widget_values.enddate_filter_checkbox.get(),
-                        value)
-
-                    if const.JSON_TIME_DURATION in record:
-                        value = record[const.JSON_TIME_DURATION]
-                    else:
-                        value = ''
-                    row.duration = Helpers.add_field_by_conditions(
-                        widget_values.duration_filter_checkbox.get(),
-                        value)
-
-                    expected_result[row_number] = row
-                    row_number += 1
-
-        # Comparing expected and real result.
+        expected_result = JsonHelper.get_results_from_json_files(file_list, widget_values)
         true_counter = 0
         assert len(table_results) == len(expected_result), 'Rows count is not equal expected value'
 
@@ -366,6 +305,29 @@ class Asserts():
 
         assert true_counter == len(expected_result), \
             'Results are not matching with expected values.'
+
+    @staticmethod
+    def assert_analytic_frame_results_are_equal(
+        table_results: dict,
+        expected_results: dict,
+        widget_values: AnalyticWidgetsWithValue):
+        """ Compare two dictionaries results from table and from json_file. """
+
+        Asserts.assert_widget_value_is_equal(widget_values.category_merge_checkbox, False)
+
+        true_counter = 0
+        assert len(table_results) == len(expected_results), 'Rows count is not equal expected value'
+
+        for expected_value in expected_results.values():
+            for real_value in table_results.values():
+                if expected_value == real_value:
+                    true_counter += 1
+                    break
+
+        assert true_counter == len(expected_results), \
+            'Results are not matching with expected values.'
+
+        assert table_results == expected_results, 'Dictionaries are not equal.'
 
     @staticmethod
     def assert_analytic_frame_result_correct_columns(
