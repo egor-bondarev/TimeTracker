@@ -13,14 +13,13 @@ from TaskTracker.tests.local_tests.asserts.asserts import Asserts
 def test_default_state(create_filled_json):
     """ Default widgets states and values"""
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")
@@ -30,15 +29,14 @@ def test_default_state(create_filled_json):
 def test_state_after_reporting(create_filled_json):
     """ Widgets states and values after report """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_report_state(analytic_frame.get_widgets())
     Asserts.assert_analytic_frame_report_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")
@@ -47,7 +45,6 @@ def test_state_after_reporting(create_filled_json):
 @pytest.mark.order(3)
 def test_state_after_cleaning_report(create_filled_json):
     """ Widgets states and values after cleaning report """
-    test_json_files = create_filled_json
 
     analytic_frame = AnalyticFrameWrapper()
     analytic_frame.press_button_report()
@@ -56,8 +53,8 @@ def test_state_after_cleaning_report(create_filled_json):
     Asserts.assert_analytic_frame_default_state(analytic_frame.get_widgets())
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")

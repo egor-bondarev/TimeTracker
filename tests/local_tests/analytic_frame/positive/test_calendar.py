@@ -14,13 +14,12 @@ from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 def test_one_json_file(create_filled_json):
     """ One date for both date fields. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[0])
+        create_filled_json[0],
+        create_filled_json[0])
 
 @allure.epic("Analytic Frame")
 @allure.feature("Calendar")
@@ -31,13 +30,12 @@ def test_one_json_file(create_filled_json):
 def test_three_json_files(create_filled_json):
     """ Correct dates in fields for three json files. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[2])
+        create_filled_json[0],
+        create_filled_json[2])
 
 @allure.epic("Analytic Frame")
 @allure.feature("Calendar")
@@ -47,13 +45,12 @@ def test_three_json_files(create_filled_json):
 def test_end_date_frame_has_newer_date(create_filled_json):
     """ End date calendar frame with newer date. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
     new_end_date = Generators.generate_date()
     analytic_frame.set_end_date(new_end_date)
@@ -70,13 +67,12 @@ def test_end_date_frame_has_newer_date(create_filled_json):
 def test_start_date_frame_has_older_date(create_filled_json):
     """ Start date calendar frame with older date. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
     new_start_date = Generators.generate_date()
     analytic_frame.set_start_date(new_start_date)
@@ -93,13 +89,12 @@ def test_start_date_frame_has_older_date(create_filled_json):
 def test_set_start_date_in_calendar(create_filled_json):
     """ Set new start date in the calendar frame. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
     new_date = Generators.generate_date()
     analytic_frame.press_select_date_in_calendar(new_date, 'start')
@@ -115,18 +110,17 @@ def test_set_start_date_in_calendar(create_filled_json):
 def test_set_end_date_in_calendar(create_filled_json):
     """ Set new end date in the calendar frame. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
     new_date = Generators.generate_date()
     analytic_frame.press_select_date_in_calendar(new_date, 'end')
+    
     assert analytic_frame.get_date_from_calendar() == new_date
-
     assert analytic_frame.get_widgets_value().end_date_entry.get() == new_date
 
 @allure.epic("Analytic Frame")
@@ -137,13 +131,12 @@ def test_set_end_date_in_calendar(create_filled_json):
 def test_set_both_dates_in_calendar(create_filled_json):
     """ Set both dates in the calendar frame. """
 
-    test_json_files = create_filled_json
     analytic_frame = AnalyticFrameWrapper()
 
     Asserts.assert_analytic_frame_default_values(
         analytic_frame.get_widgets_value(),
-        test_json_files[0],
-        test_json_files[1])
+        create_filled_json[0],
+        create_filled_json[1])
 
     new_start_date = Generators.generate_date()
     new_end_date = Generators.generate_date()

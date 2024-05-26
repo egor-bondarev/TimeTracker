@@ -35,6 +35,7 @@ def test_sorting_by_column(create_filled_json, sorted_by_column, sort_by_desc):
     helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
     analytic_frame.sort_by_column(sorted_by_column.value, sort_by_desc)
+
     expected_results = JsonHelper.get_sorted_results_from_json_files(
         sort_by_desc,
         analytic_frame.get_widgets_value(),
@@ -72,6 +73,7 @@ def test_sorting_by_column_which_single_visible(create_filled_json, sorted_by_co
     helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
     analytic_frame.sort_by_column(sorted_by_column.value, sort_by_desc)
+
     expected_results = JsonHelper.get_sorted_results_from_json_files(
         sort_by_desc,
         analytic_frame.get_widgets_value(),
@@ -118,6 +120,7 @@ def test_sorting_by_column_with_same_values(sort_by_desc):
     helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
     analytic_frame.sort_by_column(column.value, sort_by_desc)
+
     expected_results = JsonHelper.get_sorted_results_from_json_files(
         sort_by_desc,
         analytic_frame.get_widgets_value(),

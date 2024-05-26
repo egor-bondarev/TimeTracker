@@ -17,22 +17,17 @@ def test_description_max_length(add_one_task_to_json):
 
     input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(100, 'random')
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_finish_time = previous_record['EndTimestamp']
 
     input_frame.set_task_description(desc_value)
     input_frame.press_button_finish()
 
     expected_values = ExpectedValues(
         action_value = desc_value,
-        start_time_value = previous_finish_time,
+        start_time_value = JsonHelper.get_record_by_number(0)['EndTimestamp'],
         category_value = ''
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -42,24 +37,20 @@ def test_description_max_length(add_one_task_to_json):
 @pytest.mark.parametrize("content_type", [('russian'), ('punctuation')])
 def test_description_content_type(add_one_task_to_json, content_type):
     """ Description content type. """
+
     input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), content_type)
-
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_finish_time = previous_record['EndTimestamp']
 
     input_frame.set_task_description(desc_value)
     input_frame.press_button_finish()
 
-    last_record = json_helper.get_last_record()
-
     expected_values = ExpectedValues(
         action_value = desc_value,
-        start_time_value = previous_finish_time,
+        start_time_value = JsonHelper.get_record_by_number(0)['EndTimestamp'],
         category_value = ''
     )
-    Asserts.assert_record_finished_task(last_record, expected_values)
+
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -69,13 +60,10 @@ def test_description_content_type(add_one_task_to_json, content_type):
 @pytest.mark.parametrize("content_type", [('russian'), ('punctuation')])
 def test_category_content_type(add_one_task_to_json, content_type):
     """ Category content type. """
+
     input_frame = InputFrameWrapper()
     desc_value = Generators.generate_string(Generators.generate_number(1, 100), 'random')
     category_value = Generators.generate_string(Generators.generate_number(1, 20), content_type)
-
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_finish_time = previous_record['EndTimestamp']
 
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
@@ -83,13 +71,11 @@ def test_category_content_type(add_one_task_to_json, content_type):
 
     expected_values = ExpectedValues(
         action_value = desc_value,
-        start_time_value = previous_finish_time,
+        start_time_value = JsonHelper.get_record_by_number(0)['EndTimestamp'],
         category_value = category_value
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
 
@@ -112,18 +98,13 @@ def test_category_existed_value(add_one_task_to_json, add_categories_to_settings
     input_frame.set_category(category_value)
     input_frame.press_button_finish()
 
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_finish_time = previous_record['EndTimestamp']
-    last_record = json_helper.get_last_record()
-
     expected_values = ExpectedValues(
         action_value = desc_value,
-        start_time_value = previous_finish_time,
+        start_time_value = JsonHelper.get_record_by_number(0)['EndTimestamp'],
         category_value = category_value
     )
 
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
     Asserts.assert_settings_category_not_added(category_value)
 
@@ -142,16 +123,13 @@ def test_category_max_length(add_one_task_to_json):
     input_frame.set_category(category_value)
     input_frame.press_button_finish()
 
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_finish_time = previous_record['EndTimestamp']
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
-        start_time_value = previous_finish_time,
+        start_time_value = JsonHelper.get_record_by_number(0)['EndTimestamp'],
         category_value = category_value
     )
-    Asserts.assert_record_finished_task(last_record, expected_values)
+
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
 
@@ -163,8 +141,7 @@ def test_description_previous_value(add_one_task_to_json):
     """ Finish task without start where description has value from previous record. """
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_last_record()
+    previous_record = JsonHelper.get_last_record()
     previous_desc = previous_record['Action']
     previous_finish_time = previous_record['EndTimestamp']
 
@@ -177,9 +154,7 @@ def test_description_previous_value(add_one_task_to_json):
         category_value = ''
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -190,9 +165,8 @@ def test_description_and_category_previous_values(add_one_task_to_json):
     """ Finish task without start with description and category have values from previous record. """
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
 
-    previous_record = json_helper.get_record_by_number(0)
+    previous_record = JsonHelper.get_record_by_number(0)
     previous_desc = previous_record['Action']
     previous_category = previous_record['Category']
     previous_finish_time = previous_record['EndTimestamp']
@@ -207,8 +181,6 @@ def test_description_and_category_previous_values(add_one_task_to_json):
         category_value = previous_category
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
     Asserts.assert_settings_category_not_added(expected_values.category_value)

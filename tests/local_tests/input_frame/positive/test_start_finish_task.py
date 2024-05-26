@@ -26,16 +26,13 @@ def test_record_added_to_existed_json(add_one_task_to_json):
     time.sleep(1)
     input_frame.press_button_finish()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
-
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = category_value,
         duration_value = '0:00:01'
     )
 
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -46,8 +43,7 @@ def test_description_and_category_previous_values(add_one_task_to_json):
     """ Start and finish task where description and category have values from previous record. """
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_last_record()
+    previous_record = JsonHelper.get_last_record()
     previous_desc = previous_record['Action']
     previous_category = previous_record['Category']
 
@@ -57,16 +53,13 @@ def test_description_and_category_previous_values(add_one_task_to_json):
     time.sleep(1)
     input_frame.press_button_finish()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
-
     expected_values = ExpectedValues(
         action_value = previous_desc,
         category_value = previous_category,
         duration_value = '0:00:01'
     )
 
-    Asserts.assert_record_finished_task(last_record, expected_values)
+    Asserts.assert_record_finished_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_finished_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -87,9 +80,8 @@ def test_two_same_tasks():
         input_frame.press_button_start()
         input_frame.press_button_finish()
 
-    json_helper = JsonHelper()
-    first_record = json_helper.get_record_by_number(0)
-    second_record = json_helper.get_record_by_number(1)
+    first_record = JsonHelper.get_record_by_number(0)
+    second_record = JsonHelper.get_record_by_number(1)
 
     Asserts.assert_settings_category_not_added(category_value)
     assert first_record['Action'] == second_record['Action']

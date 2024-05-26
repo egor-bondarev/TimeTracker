@@ -17,10 +17,9 @@ import TaskTracker.local.helpers.constants as const
 def test_all_checkboxes_choosed_no_json_files():
     """ Selected all checkboxes and no json files. """
 
-    helpers = Helpers()
     analytic_frame = AnalyticFrameWrapper()
 
-    helpers.set_all_column_checkboxes_true(analytic_frame)
+    Helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_results_is_empty(analytic_frame.get_results_from_table())
@@ -34,10 +33,9 @@ def test_all_checkboxes_choosed_no_json_files():
 def test_all_checkboxes_choosed_with_json_files(create_filled_json):
     """ Selected all checkboxes with json files. """
 
-    helpers = Helpers()
     analytic_frame = AnalyticFrameWrapper()
 
-    helpers.set_all_column_checkboxes_true(analytic_frame)
+    Helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_results_is_not_empty(
@@ -62,7 +60,6 @@ def test_all_checkboxes_choosed_with_json_files(create_filled_json):
 def test_one_checkboxes_choosed_with_json_files(create_filled_json, column_name):
     """ Selected only one checkboxe with json files. """
 
-    helpers = Helpers()
     analytic_frame = AnalyticFrameWrapper()
 
     excluded_columns = []
@@ -70,7 +67,7 @@ def test_one_checkboxes_choosed_with_json_files(create_filled_json, column_name)
         if checkbox != column_name:
             excluded_columns.append(checkbox.value)
 
-    helpers.set_all_column_checkboxes_true(analytic_frame, excluded_columns)
+    Helpers.set_all_column_checkboxes_true(analytic_frame, excluded_columns)
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_results_is_not_empty(
@@ -88,10 +85,9 @@ def test_one_checkboxes_choosed_with_json_files(create_filled_json, column_name)
 def test_single_json_record_not_finished(add_one_not_finished_task_to_json):
     """ Single record in json isn't finished. """
 
-    helpers = Helpers()
     analytic_frame = AnalyticFrameWrapper()
 
-    helpers.set_all_column_checkboxes_true(analytic_frame)
+    Helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_results_is_not_empty(
@@ -110,10 +106,9 @@ def test_single_json_record_not_finished(add_one_not_finished_task_to_json):
 def test_single_json_record_without_category(add_one_task_to_json):
     """ Single record in json without category. """
 
-    helpers = Helpers()
     analytic_frame = AnalyticFrameWrapper()
 
-    helpers.set_all_column_checkboxes_true(analytic_frame)
+    Helpers.set_all_column_checkboxes_true(analytic_frame)
     analytic_frame.press_button_report()
 
     Asserts.assert_analytic_frame_results_is_not_empty(

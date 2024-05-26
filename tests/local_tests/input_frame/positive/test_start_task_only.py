@@ -66,14 +66,12 @@ def test_description_max_symbols():
     input_frame.set_task_description(desc_value)
     input_frame.press_button_start()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = ''
     )
 
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -89,14 +87,12 @@ def test_description_content_type(content_type):
     input_frame.set_task_description(desc_value)
     input_frame.press_button_start()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = ''
     )
 
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -115,14 +111,12 @@ def test_category_content_type(content_type):
     input_frame.set_category(category_value)
     input_frame.press_button_start()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = category_value
     )
 
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
 
@@ -143,14 +137,12 @@ def test_category_existed_value(add_categories_to_settings):
     input_frame.set_category(category_value)
     input_frame.press_button_start()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = category_value
     )
 
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_not_added(category_value)
 
@@ -169,14 +161,12 @@ def test_category_max_length():
     input_frame.set_category(category_value)
     input_frame.press_button_start()
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = category_value
     )
 
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
 
@@ -188,9 +178,7 @@ def test_description_previous_value(add_one_task_to_json):
     """ Start task where description has value from previous record. """
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
-    previous_desc = previous_record['Action']
+    previous_desc = JsonHelper.get_record_by_number(0)['Action']
     input_frame.set_task_description(previous_desc)
     input_frame.press_button_start()
 
@@ -199,9 +187,7 @@ def test_description_previous_value(add_one_task_to_json):
         category_value = ''
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
 
 @allure.epic("Input Frame")
@@ -212,8 +198,8 @@ def test_description_and_category_previous_values(add_one_task_to_json):
     """ Start task where description and category have values from previous record. """
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
-    previous_record = json_helper.get_record_by_number(0)
+
+    previous_record = JsonHelper.get_record_by_number(0)
     previous_desc = previous_record['Action']
     previous_category = previous_record['Category']
 
@@ -226,9 +212,7 @@ def test_description_and_category_previous_values(add_one_task_to_json):
         category_value = previous_category
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_not_added(expected_values.category_value)
 
@@ -256,10 +240,7 @@ def test_create_file_for_first_record():
         category_value = category_value
     )
 
-    json_helper = JsonHelper()
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
 
@@ -273,8 +254,7 @@ def test_add_record_to_existed_json(add_one_task_to_json):
     assert os.path.exists(const.FILENAME)
 
     input_frame = InputFrameWrapper()
-    json_helper = JsonHelper()
-    predefined_record = json_helper.get_last_record()
+    predefined_record = JsonHelper.get_last_record()
 
     expected_previous_values = ExpectedValues(
         action_value = predefined_record['Action'],
@@ -287,16 +267,14 @@ def test_add_record_to_existed_json(add_one_task_to_json):
     input_frame.set_task_description(desc_value)
     input_frame.set_category(category_value)
     input_frame.press_button_start()
-    previous_record = json_helper.get_record_by_number(0)
-    Asserts.assert_record_started_task(previous_record, expected_previous_values)
+
+    Asserts.assert_record_started_task(JsonHelper.get_record_by_number(0), expected_previous_values)
 
     expected_values = ExpectedValues(
         action_value = desc_value,
         category_value = category_value
     )
 
-    last_record = json_helper.get_last_record()
-
-    Asserts.assert_record_started_task(last_record, expected_values)
+    Asserts.assert_record_started_task(JsonHelper.get_last_record(), expected_values)
     Asserts.assert_controls_state_started_task(input_frame.controls_state)
     Asserts.assert_settings_category_added(category_value)
