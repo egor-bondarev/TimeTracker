@@ -116,7 +116,7 @@ def test_checkboxes_values_saveded_after_merge_on_off():
     Asserts.assert_widget_value_is_equal(
         analytic_frame.get_widgets_value().startdate_filter_checkbox, False)
     Asserts.assert_widget_value_is_equal(
-        analytic_frame.get_widgets_value().duration_filter_checkbox, False)
+        analytic_frame.get_widgets_value().duration_filter_checkbox, True)
 
 @allure.epic("Analytic Frame")
 @allure.feature("Main scenarios")
@@ -142,4 +142,4 @@ def test_checkboxes_values_saveded_after_merge_and_report_on_off():
     Asserts.assert_widget_value_is_equal(
         analytic_frame.get_widgets_value().startdate_filter_checkbox, False)
     Asserts.assert_widget_value_is_equal(
-        analytic_frame.get_widgets_value().duration_filter_checkbox, False)
+        analytic_frame.get_widgets_value().duration_filter_checkbox, True)

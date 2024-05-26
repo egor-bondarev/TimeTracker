@@ -232,13 +232,14 @@ class Asserts():
             widgets.date_filter_checkbox,
             widgets.desc_filter_checkbox,
             widgets.startdate_filter_checkbox,
-            widgets.enddate_filter_checkbox,
-            widgets.category_filter_checkbox,
-            widgets.duration_filter_checkbox
+            widgets.enddate_filter_checkbox
         ]
 
         for widget in disabled_widget_list:
             Asserts.assert_widget_is_disabled(widget)
+
+        Asserts.assert_widget_is_disabled(widgets.duration_filter_checkbox)
+        Asserts.assert_widget_is_disabled(widgets.category_filter_checkbox)
 
     @staticmethod
     def assert_analytic_frame_merge_default_states(widgets: AnalyticFrameWidgets):
@@ -314,6 +315,25 @@ class Asserts():
         """ Compare two dictionaries results from table and from json_file. """
 
         Asserts.assert_widget_value_is_equal(widget_values.category_merge_checkbox, False)
+        Asserts.assert_analytic_frame_results_matched(table_results, expected_results)
+
+        assert table_results == expected_results, 'Dictionaries are not equal.'
+
+    @staticmethod
+    def assert_analytic_frame_merged_results_are_equal(
+        table_results: dict,
+        expected_results: dict,
+        widget_values: AnalyticWidgetsWithValue):
+        """ Compare two dictionaries with merged results from table and from json_file. """
+
+        Asserts.assert_widget_value_is_equal(widget_values.category_merge_checkbox, True)
+        Asserts.assert_analytic_frame_results_matched(table_results, expected_results)
+
+    @staticmethod
+    def assert_analytic_frame_results_matched(
+        table_results: dict,
+        expected_results: dict):
+        """ Assert that each row from expected result dictionary exist in real result. """
 
         true_counter = 0
         assert len(table_results) == len(expected_results), 'Rows count is not equal expected value'
@@ -326,8 +346,6 @@ class Asserts():
 
         assert true_counter == len(expected_results), \
             'Results are not matching with expected values.'
-
-        assert table_results == expected_results, 'Dictionaries are not equal.'
 
     @staticmethod
     def assert_analytic_frame_result_correct_columns(

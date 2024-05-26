@@ -1,6 +1,8 @@
 """ Main helpers. """
 from TaskTracker.tests.local_tests.wrappers.analytic_frame_wrapper import AnalyticFrameWrapper
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticFrameColumnCheckboxesNames
+from TaskTracker.tests.local_tests.test_helpers.json_helper import JsonHelper
+from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 
 class Helpers:
     """ Main helper class. """
@@ -27,3 +29,13 @@ class Helpers:
                 analytic_frame.set_checkbox_value(checkbox.value, False)
             else:
                 analytic_frame.set_checkbox_value(checkbox, True)
+
+    @staticmethod
+    def add_record_to_json_file(repeated_count: int, filename: str, category: str):
+        """ Add record to setted count of files. """
+
+        for _ in range(repeated_count):
+            JsonHelper.add_record_to_json(
+                filename,
+                Generators.generate_string(Generators.generate_number(1, 100), 'random'),
+                category)

@@ -89,6 +89,7 @@ class AnalyticController():
             checkboxes_value.start_date_value = False
             checkboxes_value.finish_date_value = False
             checkboxes_value.categories_value = True
+            checkboxes_value.duration_value = True
 
         checkbox_states = {
             'Date': checkboxes_value.date_value,

@@ -151,6 +151,8 @@ class AnalyticFrameWrapper():
             case AnalyticFrameColumnCheckboxesNames.DURATION.value:
                 checkbox = widgets_with_value.duration_filter_checkbox
             case 'Merge category':
+                widgets_with_value.duration_filter_checkbox.set(True)
+                widgets_with_value.category_filter_checkbox.set(True)
                 checkboxes_states = FilterCheckboxes(
                     date = self.analytic_view.checkbox_date,
                     desc = self.analytic_view.checkbox_desc,

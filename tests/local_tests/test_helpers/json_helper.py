@@ -1,6 +1,8 @@
 """ Helper for working with json files. """
 import os
 import json
+import re
+from datetime import timedelta
 import TaskTracker.local.helpers.constants as const
 from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticWidgetsWithValue, \
@@ -155,9 +157,15 @@ class JsonHelper():
             file_list,
             widget_values,
             descending)
-        sorted_by_values_dict = {}
 
-        for result in result_from_json.items():
+        return JsonHelper.sort_results(result_from_json, sorted_column, descending)
+
+    @staticmethod
+    def sort_results(result_dict: dict, sorted_column: str, descending) -> dict:
+        """ Return sorted results. """
+
+        sorted_by_values_dict = {}
+        for result in result_dict.items():
             tree = TreeResults.__reduce__(result[1])
             sorted_by_values_dict[result[0]] = tree[2][sorted_column]
 
@@ -168,7 +176,95 @@ class JsonHelper():
         result_from_json_sorted = {}
         new_key = 1
         for key in sorted_by_values_dict.keys():
-            result_from_json_sorted[new_key] = result_from_json[key]
+            result_from_json_sorted[new_key] = result_dict[key]
             new_key += 1
 
         return result_from_json_sorted
+
+    @staticmethod
+    def get_merged_results_from_json_files(
+        widget_values: AnalyticWidgetsWithValue,
+        file_list: list[str]) -> dict:
+        """ Return merged by categories results from json files. """
+        result_from_json = JsonHelper.get_results_from_json_files(
+            file_list,
+            widget_values)
+
+        dict_for_cat_and_duration = {}
+
+        for value in result_from_json.values():
+            line = TreeResults.__reduce__(value)[2]
+            category = line['category']
+            duration = line['duration']
+            if category == '':
+                continue
+
+            if category in dict_for_cat_and_duration:
+                dict_for_cat_and_duration[category] = JsonHelper.__convert_str_to_timedelta(
+                    dict_for_cat_and_duration[category])
+                dict_for_cat_and_duration[category] += JsonHelper.__convert_str_to_timedelta(
+                    duration)
+                dict_for_cat_and_duration[category] = JsonHelper.__convert_from_timedelta(
+                    dict_for_cat_and_duration[category])
+            else:
+                dict_for_cat_and_duration[category] = JsonHelper.__convert_str_to_timedelta(
+                    duration)
+
+            dict_for_cat_and_duration[category] = \
+                str(dict_for_cat_and_duration[category])
+
+        result_from_json_merged = {}
+        new_key = 1
+        for key, value in dict_for_cat_and_duration.items():
+            row = TreeResults()
+            row.date = None
+            row.description = None
+            row.category = key
+            row.start_time = None
+            row.finish_time = None
+            row.duration = value
+            result_from_json_merged[new_key] = row
+            new_key += 1
+
+        return result_from_json_merged
+
+    @staticmethod
+    def __convert_str_to_timedelta(time: str) -> timedelta:
+        time = re.findall(r'\d\d*:\d\d:\d\d', time)[0]
+
+        try:
+            h, m, s = time.split(':')
+            if h == '00':
+                h = '0'
+        except ValueError:
+            h, m, s = 0, 0, 0
+
+        return timedelta(hours = int(h), minutes = int(m), seconds = int(s))
+
+    @staticmethod
+    def __convert_from_timedelta(duration: timedelta) -> str:
+        hours_delta = duration.days * 24
+        time = re.findall(r'\d\d*:\d\d:\d\d', str(duration))[0]
+        h, m, s = time.split(':')
+        new_h = int(h) + hours_delta
+        result = f'{new_h}:{m}:{s}'
+        return result
+
+    @staticmethod
+    def add_record_to_json(filename: str, desc: str, category: str):
+        """ Add record to existed json file. """
+
+        time_data = Generators.generate_timestamp_pair()
+
+        with open(file = filename, mode = 'r+', encoding="utf-8") as file:
+            file_data = json.load(file)
+            new_record = file_data[const.JSON_ROOT]
+            new_record.append({
+                const.JSON_TASK: desc,
+                const.JSON_CATEGORY: category,
+                const.JSON_TIME_STAMP_START: time_data[0],
+                const.JSON_TIME_STAMP_END: time_data[1],
+                const.JSON_TIME_DURATION: time_data[2]})
+
+            file.seek(0)
+            json.dump(file_data, file, indent = 4, ensure_ascii = False)

@@ -169,4 +169,8 @@ class AnalyticModel():
     def parse_from_timedelta(self, duration: timedelta) -> str:
         """ Parse time from timedelta to str. """
 
-        return str(datetime.strptime(str(duration), const.TIME_MASK).time())
+        time = re.findall(r'\d\d*:\d\d:\d\d', str(duration))[0]
+        h, m, s = time.split(':')
+        new_h = int(h) + duration.days * 24
+
+        return f'{new_h}:{m}:{s}'
