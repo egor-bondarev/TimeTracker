@@ -15,10 +15,14 @@ If you want to change report, you need to push **Clean** and then again push **R
 
 # Run tests
 From project folder with run_tests.sh you need to run this script
-> sh ./run_tests.sh -c \n
-> with options: \n 
-> h         print this help information \n
-> c         clean previous allure results
+```
+sh ./run_tests.sh -c \n
+\with options: \n 
+h         print this help information \n
+c         clean previous allure results
+```
 
 # Run app
-> python3 ./main.py
+```
+python3 ./main.py
+```
