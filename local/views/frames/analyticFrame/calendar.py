@@ -11,30 +11,33 @@ class CalendarFrame:
     """Calendar class"""
     def __init__(self):
         self.actions = AnalyticController()
+        self.calendar_frame = Calendar()
+        self.calendar_window = tk.Tk()
 
     def view(self, date, entry: tk.StringVar):
         """Calendar window."""
-        calendar_window = tk.Tk()
-
-        calendar_window.title('Calendar')
-        calendar_window.geometry('300x300')
+        self.calendar_window.title('Calendar')
+        self.calendar_window.geometry('300x300')
 
         date_object = datetime.strptime(date, const.DATE_MASK)
 
-        calendar_frame = Calendar(
-            calendar_window,
+        self.calendar_frame = Calendar(
+            self.calendar_window,
             selectmode = 'day',
             year = date_object.year,
             month = date_object.month,
             day = date_object.day)
 
         btn_enter = ttk.Button(
-            master = calendar_window,
-            text = "Enter",
-            command = lambda: self.actions.calendar_set_date(calendar_frame, calendar_window, entry)
+            master = self.calendar_window,
+            text = "Select",
+            command = lambda: self.actions.calendar_set_date(
+                self.calendar_frame,
+                self.calendar_window,
+                entry)
             )
         btn_enter.pack(anchor = S)
 
-        calendar_frame.pack(pady = 20)
-        calendar_frame.focus_force()
-        self.actions.set_window_focus(True, calendar_window)
+        self.calendar_frame.pack(pady = 20)
+        self.calendar_frame.focus_force()
+        self.actions.set_window_focus(True, self.calendar_window)

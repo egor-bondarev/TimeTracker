@@ -1,7 +1,7 @@
 # !/bin/bash
 
 run_tests(){
-    pytest --alluredir allure-results ./tests/local_tests
+    pytest --alluredir allure-results ./TaskTracker/tests/local_tests
 }
 
 show_allure_results(){
@@ -16,7 +16,6 @@ help(){
     echo "options:"
     echo "h         print this help information"
     echo "c         clean previous allure results"
-    echo "o         open allure report in browser"
     echo
 }
 

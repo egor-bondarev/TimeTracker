@@ -43,7 +43,8 @@ class AnalyticModel():
             if checkbox_states[item.checkbox_name]:
                 try:
                     setattr(new_record, item.record_field, record[item.json_field])
-                except KeyError:
+                except KeyError as exception:
+                    logger.exception(exception)
                     setattr(new_record, item.record_field, '')
 
         return new_record
@@ -168,4 +169,8 @@ class AnalyticModel():
     def parse_from_timedelta(self, duration: timedelta) -> str:
         """ Parse time from timedelta to str. """
 
-        return str(datetime.strptime(str(duration), const.TIME_MASK).time())
+        time = re.findall(r'\d\d*:\d\d:\d\d', str(duration))[0]
+        h, m, s = time.split(':')
+        new_h = int(h) + duration.days * 24
+
+        return f'{new_h}:{m}:{s}'

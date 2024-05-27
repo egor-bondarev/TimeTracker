@@ -89,6 +89,7 @@ class AnalyticController():
             checkboxes_value.start_date_value = False
             checkboxes_value.finish_date_value = False
             checkboxes_value.categories_value = True
+            checkboxes_value.duration_value = True
 
         checkbox_states = {
             'Date': checkboxes_value.date_value,
@@ -105,7 +106,11 @@ class AnalyticController():
             if value:
                 display_columns.append(column)
 
-        self.tree = ttk.Treeview(master=frame, columns=display_columns, show="headings")
+        self.tree = ttk.Treeview(
+            master = frame,
+            columns = display_columns,
+            show = "headings",
+            name = 'tree result')
 
         # Creating heading for table.
         for column in display_columns:
@@ -148,6 +153,7 @@ class AnalyticController():
         """ Destroy table and scroll bars."""
 
         self.tree.destroy()
+        self.tree = ttk.Treeview(show = "headings", name = 'tree result')
         self.tree_scroll_x.destroy()
         self.tree_scroll_y.destroy()
         self.change_widgets_states(False, report_buttons)
