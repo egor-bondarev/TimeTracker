@@ -2,8 +2,8 @@
 import tkinter as tk
 
 from tkinter import ttk
-from TaskTracker.local.controllers.input_controller import InputController
-from TaskTracker.local.helpers.control_states import InputFrameAllControls
+from local.controllers.input_controller import InputController
+from local.helpers.control_states import InputFrameAllControls
 
 class InputFrame():
     """Class for implementing input frame."""

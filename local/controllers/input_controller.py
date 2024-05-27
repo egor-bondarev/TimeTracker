@@ -1,8 +1,8 @@
 """ Actions on input frame. """
 import tkinter
 
-from TaskTracker.local.models.input_model import InputModel
-from TaskTracker.local.helpers.control_states import InputFrameAllControls
+from local.models.input_model import InputModel
+from local.helpers.control_states import InputFrameAllControls
 
 class InputController():
     """ Actions class. """

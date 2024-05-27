@@ -4,8 +4,8 @@ from tkinter import ttk, S
 from datetime import datetime
 from tkcalendar import Calendar
 
-from TaskTracker.local.controllers.analytic_controller import AnalyticController
-import TaskTracker.local.helpers.constants as const
+from local.controllers.analytic_controller import AnalyticController
+import local.helpers.constants as const
 
 class CalendarFrame:
     """Calendar class"""

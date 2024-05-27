@@ -7,7 +7,7 @@ import uuid
 import re
 from pathlib import Path
 import pytest
-import TaskTracker.local.helpers.constants as const
+import TaskTracker.tests.local_tests.test_helpers.constants as test_settings
 from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 from TaskTracker.tests.local_tests.wrappers.input_frame_wrapper import InputFrameWrapper
 
@@ -38,14 +38,14 @@ def setup_function():
 def __get_user_categories() -> list:
     """ Get all user categories from setting file. """
 
-    with open(file = const.USER_SETTINGS_FILE, mode = 'r+', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'r+', encoding="utf-8") as file:
         file_data = json.load(file)
         return file_data['Categories']
 
 def __clean_test_categories(user_categories: list):
     """ Remove test categories from setting file. """
 
-    with open(file = const.USER_SETTINGS_FILE, mode = 'r', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'r', encoding="utf-8") as file:
         file_data = json.load(file)
         test_categories = []
         for new_category in file_data['Categories']:
@@ -55,7 +55,7 @@ def __clean_test_categories(user_categories: list):
     for category in test_categories:
         file_data['Categories'].remove(category)
 
-    with open(file = const.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
         json.dump(file_data, file, indent = 4, ensure_ascii = False)
 
 @pytest.fixture
@@ -69,7 +69,7 @@ def add_categories_to_settings(request):
         category_list.append(Generators.generate_string(request.param[1], 'random').lower())
 
     for category in category_list:
-        with open(file = const.USER_SETTINGS_FILE, mode = 'r+', encoding="utf-8") as file:
+        with open(file = test_settings.USER_SETTINGS_FILE, mode = 'r+', encoding="utf-8") as file:
             file_data = json.load(file)
             file_data['Categories'].append(category)
             file.seek(0)
@@ -105,13 +105,13 @@ def clean_return_user_categories():
     """ Before test all categories will removed and will return after test. """
 
     user_categories = __get_user_categories()
-    with open(file = const.USER_SETTINGS_FILE, mode = 'r', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'r', encoding="utf-8") as file:
         file_data = json.load(file)
 
     for category in user_categories:
         file_data['Categories'].remove(category)
 
-    with open(file = const.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
         json.dump(file_data, file, indent = 4, ensure_ascii = False)
 
     yield
@@ -119,5 +119,5 @@ def clean_return_user_categories():
     for category in user_categories:
         file_data['Categories'].append(category)
 
-    with open(file = const.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
+    with open(file = test_settings.USER_SETTINGS_FILE, mode = 'w', encoding="utf-8") as file:
         json.dump(file_data, file, indent = 4, ensure_ascii = False)

@@ -4,6 +4,7 @@ import json
 import re
 from datetime import timedelta
 import TaskTracker.local.helpers.constants as const
+import TaskTracker.tests.local_tests.test_helpers.constants as test_settings
 from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 from TaskTracker.tests.local_tests.test_helpers.structures import AnalyticWidgetsWithValue, \
     TreeResults
@@ -27,7 +28,7 @@ class JsonHelper():
     @staticmethod
     def get_categories() -> list:
         """ Get list of categories from user_settings.json. """
-        file_data = JsonHelper.__get_file_data(const.USER_SETTINGS_FILE)
+        file_data = JsonHelper.__get_file_data(test_settings.USER_SETTINGS_FILE)
         return file_data['Categories']
 
     @staticmethod

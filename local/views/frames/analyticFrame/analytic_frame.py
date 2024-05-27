@@ -3,11 +3,11 @@ import tkinter as tk
 from tkinter import ttk, BOTH
 from datetime import datetime
 
-from TaskTracker.local.views.frames.analyticFrame.calendar import CalendarFrame
-from TaskTracker.local.controllers.analytic_controller import AnalyticController
-from TaskTracker.local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
-from TaskTracker.local.helpers.helpers import DateInterval, ReportButtons
-import TaskTracker.local.helpers.constants as const
+from local.views.frames.analyticFrame.calendar import CalendarFrame
+from local.controllers.analytic_controller import AnalyticController
+from local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
+from local.helpers.helpers import DateInterval, ReportButtons
+import local.helpers.constants as const
 
 class AnalyticFrame():
     """ Description of analytic frame."""

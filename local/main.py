@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
-from TaskTracker.local.controllers.main_controller import MainController
+from local.controllers.main_controller import MainController
 
 logger = logging.getLogger(__name__)
 

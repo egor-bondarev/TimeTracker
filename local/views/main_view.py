@@ -2,8 +2,8 @@
 import tkinter as tk
 from tkinter import ttk, BOTH
 
-from TaskTracker.local.views.frames.input_frame import InputFrame
-from TaskTracker.local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
+from local.views.frames.input_frame import InputFrame
+from local.views.frames.analyticFrame.analytic_frame import AnalyticFrame
 
 class MainView():
     """Main window."""

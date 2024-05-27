@@ -4,9 +4,9 @@ import time
 import os
 import logging
 from datetime import datetime
-import TaskTracker.local.helpers.constants as const
+import local.helpers.constants as const
 
-from TaskTracker.local.helpers.record_info import RecordInfo
+from local.helpers.record_info import RecordInfo
 
 logger = logging.getLogger(__name__)
 

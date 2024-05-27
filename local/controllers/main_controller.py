@@ -1,6 +1,6 @@
 """main_controller.py"""
 
-from TaskTracker.local.views.main_view import MainView
+from local.views.main_view import MainView
 
 class MainController():
     """Main controller."""
