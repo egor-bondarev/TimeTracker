@@ -14,7 +14,7 @@ from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 @allure.feature("Common")
 @allure.title("Description has length more than max")
 @pytest.mark.order(1)
-def test_description_more_than_max_length():
+def test_description_length_more_than_max():
     """ Finish task without start where description has max length. """
 
     input_frame = InputFrameWrapper()
@@ -42,7 +42,7 @@ def test_description_more_than_max_length():
 @allure.feature("Common")
 @allure.title("Category has length more than max")
 @pytest.mark.order(2)
-def test_category_more_than_max_length():
+def test_category_length_more_than_max():
     """ Finish task without start where category has max length. """
 
     input_frame = InputFrameWrapper()

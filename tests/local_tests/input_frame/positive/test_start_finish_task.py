@@ -65,7 +65,7 @@ def test_description_and_category_previous_values(add_one_task_to_json):
 @allure.epic("Input Frame")
 @allure.feature("Start then finish")
 @allure.title("Two same records")
-@pytest.mark.order(1)
+@pytest.mark.order(3)
 def test_two_same_tasks():
     """ Two same record in json result file.  """
 

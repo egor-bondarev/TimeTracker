@@ -42,7 +42,7 @@ def test_three_json_files(create_filled_json):
 @allure.title("End date calendar frame with newer date")
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(3)
-def test_end_date_frame_has_newer_date(create_filled_json):
+def test_end_date_newer_than_start_date(create_filled_json):
     """ End date calendar frame with newer date. """
 
     analytic_frame = AnalyticFrameWrapper()
@@ -64,7 +64,7 @@ def test_end_date_frame_has_newer_date(create_filled_json):
 @allure.title("Start date calendar frame with older date")
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(4)
-def test_start_date_frame_has_older_date(create_filled_json):
+def test_start_date_older_than_end_date(create_filled_json):
     """ Start date calendar frame with older date. """
 
     analytic_frame = AnalyticFrameWrapper()
@@ -86,7 +86,7 @@ def test_start_date_frame_has_older_date(create_filled_json):
 @allure.title("Set new start date in the calendar frame")
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(5)
-def test_set_start_date_in_calendar(create_filled_json):
+def test_set_only_start_date(create_filled_json):
     """ Set new start date in the calendar frame. """
 
     analytic_frame = AnalyticFrameWrapper()
@@ -107,7 +107,7 @@ def test_set_start_date_in_calendar(create_filled_json):
 @allure.title("Set new end date in the calendar frame")
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(6)
-def test_set_end_date_in_calendar(create_filled_json):
+def test_set_only_end_date(create_filled_json):
     """ Set new end date in the calendar frame. """
 
     analytic_frame = AnalyticFrameWrapper()
@@ -128,7 +128,7 @@ def test_set_end_date_in_calendar(create_filled_json):
 @allure.title("Set both dates in the calendar frame")
 @pytest.mark.parametrize(('create_filled_json'), [(2, 1)], indirect=True)
 @pytest.mark.order(7)
-def test_set_both_dates_in_calendar(create_filled_json):
+def test_set_both_dates(create_filled_json):
     """ Set both dates in the calendar frame. """
 
     analytic_frame = AnalyticFrameWrapper()

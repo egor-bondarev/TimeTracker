@@ -14,7 +14,7 @@ from TaskTracker.tests.local_tests.test_helpers.generators import Generators
 @allure.feature("Only start task")
 @allure.title("Default widget states")
 @pytest.mark.order(1)
-def test_default_states():
+def test_default_widget_states():
     """ Default state. """
 
     input_frame = InputFrameWrapper()
@@ -220,7 +220,7 @@ def test_description_and_category_previous_values(add_one_task_to_json):
 @allure.feature("Only start task")
 @allure.title("Json file created")
 @pytest.mark.order(11)
-def test_create_file_for_first_record():
+def test_empty_json_file():
     """ Json file created after starting the task. """
 
     assert not os.path.exists(const.FILENAME)

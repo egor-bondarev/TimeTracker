@@ -13,6 +13,6 @@ JSON_TIME_DURATION = 'Duration'
 JSON_CATEGORY = 'Category'
 
 FILENAME = f'{date.today()}.json'
-USER_SETTINGS_FILE = './TaskTracker/local/configs/user_settings.json'
+USER_SETTINGS_FILE = './local/configs/user_settings.json'
 
 LOG_FILENAME = 'log.txt'
