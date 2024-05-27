@@ -4,9 +4,9 @@ from datetime import datetime
 from tkinter import ttk, BOTH, RIGHT, BOTTOM
 from tkcalendar import Calendar
 
-from local.models.analytic_model import AnalyticModel
-from local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
-from local.helpers.helpers import DateInterval, ReportButtons
+from TaskTracker.local.models.analytic_model import AnalyticModel
+from TaskTracker.local.helpers.control_states import FilterCheckboxes, FilterCheckboxValues
+from TaskTracker.local.helpers.helpers import DateInterval, ReportButtons
 
 class AnalyticController():
     """ Actions class. """

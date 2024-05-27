@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import dataclasses
 import logging
 
-import local.helpers.constants as const
-from local.helpers.record_info import RecordForView
-from local.helpers.helpers import DateInterval, CheckboxRecordFile
+import TaskTracker.local.helpers.constants as const
+from TaskTracker.local.helpers.record_info import RecordForView
+from TaskTracker.local.helpers.helpers import DateInterval, CheckboxRecordFile
 
 logger = logging.getLogger(__name__)
 
