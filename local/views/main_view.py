@@ -11,7 +11,7 @@ class MainView():
         # Set window.
         self.main_window = tk.Tk()
         self.main_window.title('TimeTracker')
-        self.main_window.geometry('250x140')
+        self.main_window.geometry('180x110')
 
         # Set frames.
         notebook = ttk.Notebook(self.main_window)
@@ -34,6 +34,6 @@ class MainView():
 
         tab = event.widget.tab('current')['text']
         if tab == 'Time':
-            self.main_window.geometry('250x140')
+            self.main_window.geometry('180x110')
         elif tab == 'Analytics':
             self.main_window.geometry('420x450')

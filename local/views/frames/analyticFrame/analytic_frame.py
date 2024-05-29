@@ -76,7 +76,7 @@ class AnalyticFrame():
     def view(self) -> tk.Frame:
         """ Analytic frame view. """
 
-        label_start_date = ttk.Label(master = self.start_date_frame, text = "Start date: ", width=7)
+        label_start_date = ttk.Label(master = self.start_date_frame, text = "Start date: ", width = 10)
 
         start_date = self.controller.get_date(True)
         self.entry_start_date = ttk.Entry(
@@ -96,7 +96,7 @@ class AnalyticFrame():
         self.entry_start_date.pack(fill = 'x', side = 'left')
         self.btn_change_start_date.pack(padx=3, side = 'left')
 
-        label_end_date = ttk.Label(master = self.end_date_frame, text = "End date: ", width=7)
+        label_end_date = ttk.Label(master = self.end_date_frame, text = "End date: ", width = 10)
 
         end_date = self.controller.get_date()
 
