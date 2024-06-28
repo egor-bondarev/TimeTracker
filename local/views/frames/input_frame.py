@@ -43,7 +43,7 @@ class InputFrame():
         # entry field
         self.entry = ttk.Entry(
             master = entry_frame,
-            width = 100,
+            width = 20,
             font = ("default", 10),
             textvariable = self.entry_task_desc)
 
@@ -71,7 +71,8 @@ class InputFrame():
             textvariable = self.category_value,
             master = category_frame,
             values = self.actions.show_categories(),
-            postcommand = update_combobox_values
+            postcommand = update_combobox_values,
+            width = 10
             )
         self.category_value.trace_add(
             "write",
