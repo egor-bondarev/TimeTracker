@@ -2,6 +2,7 @@
 import json
 import time
 import os
+import re
 import logging
 from datetime import datetime
 import local.helpers.constants as const
@@ -71,7 +72,7 @@ class InputModel():
                         category = task_category,
                         start_timestamp = last_task[const.JSON_TIME_STAMP_END],
                         end_timestamp = current_timestamp,
-                        task_duration = str(duration))
+                        task_duration = re.findall(r'\d\d*:\d\d:\d\d', str(duration))[0])
                     self.add_new_record(file_data, True, record)
 
                 # If start was pushed before
@@ -87,7 +88,7 @@ class InputModel():
 
                     record = RecordInfo(
                         end_timestamp = current_timestamp,
-                        task_duration = str(duration))
+                        task_duration = re.findall(r'\d\d*:\d\d:\d\d', str(duration))[0])
                     self.add_to_record(last_task_node, record)
             # If pressed START
             else:
