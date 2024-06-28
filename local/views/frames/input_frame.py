@@ -57,12 +57,12 @@ class InputFrame():
                         lambda event: self.actions.start_task(get_controls_state(self)))
         self.entry.focus()
         entry_frame.pack()
-        self.entry.pack()
+        self.entry.pack(padx=3, pady=3)
 
         category_frame = ttk.Frame(self.input_frame)
         category_frame.pack()
         label_category= ttk.Label(master = category_frame, text = "Category: ")
-        label_category.pack(side = 'left')
+        label_category.pack(side = 'left', padx=3, pady=3)
 
         def update_combobox_values():
             self.category_combobox['values'] = self.actions.show_categories()
@@ -83,7 +83,7 @@ class InputFrame():
 
         #start button
         buttons_frame = ttk.Frame(self.input_frame)
-        buttons_frame.pack()
+        buttons_frame.pack(padx=3, pady=3)
         self.btn_start = ttk.Button(
             master = buttons_frame,
             text = "Start",
